@@ -14,6 +14,14 @@ pub fn offset_multi_polygon(input_polygon: &MultiPolygon, distance: f64) -> Mult
     skel.apply_vertex_queue(&vq, offset_distance)
 }
 
+pub fn skeleton_of_polygon(input_polygon: &Polygon, orientation: bool) -> Skeleton{
+    Skeleton::skeleton_of_polygon(input_polygon, orientation)
+}
+
+pub fn skeleton_of_multi_polygon(input_polygon: &MultiPolygon, orientation: bool) -> Skeleton{
+    Skeleton::skeleton_of_polygon_vector(&input_polygon.0, orientation)
+}
+
 pub fn skel(input_polygon: &MultiPolygon, distance: f64) -> Vec<LineString>{
     let orientation = if distance < 0. {true} else {false};
     let skel = Skeleton::skeleton_of_polygon_vector(&input_polygon.0, orientation);

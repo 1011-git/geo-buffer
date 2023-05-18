@@ -267,8 +267,8 @@ impl Skeleton{
                 li_ray.intersect(&vertex_vector[cv_real].unwrap_ray())
             };
             if is_init {
-                if orient && base_ray.orientation(&real_intersection) <= 0 {continue;}
-                if !orient && base_ray.orientation(&real_intersection) >= 0 {continue;}
+                if orient && base_ray.orientation(&real_intersection) < 0 {continue;}
+                if !orient && base_ray.orientation(&real_intersection) > 0 {continue;}
             }
             else{
                 if orient{

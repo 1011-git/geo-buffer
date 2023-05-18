@@ -16,9 +16,12 @@
 //! where the result expands. Positive values mean it going outward --- that is, it expands, --- and negative values mean going inward
 //! --- it shrinks ---.
 //! 
-//! The code snippets below are a brief guide to use this crate.
+//! Each code snippets below is a brief guide to use this crate. Click 'Result' to expand the visualized result.
+//! (The red polygon designates the input, and the orange one designates the results.)
 //! 
-//! + You can manipulate a polygon with ease by a single function call.
+//! ### Example 1
+//! 
+//! You can manipulate a polygon with ease by a single function call.
 //! 
 //! ```
 //! use polygon_offset::offset_polygon;
@@ -38,7 +41,9 @@
 //! <img src="./../../../ex1.svg" style="padding: 25px 30%;"/>
 //! </details>
 //! 
-//! + This example shows the case where the polygon is split while it shrinks.
+//! ### Example 2
+//! 
+//! This example shows the case where the polygon is split while it shrinks.
 //! 
 //! ```
 //! use polygon_offset::offset_polygon;
@@ -55,7 +60,9 @@
 //! <img src="./../../../ex2.svg" style="padding: 25px 30%;"/>
 //! </details>
 //! 
-//! + You can apply this function to a set of `Polygon`s (i.e. `MultiPolygon`). The constituent polygons may be integrated while they expand.
+//! ### Example 3
+//! 
+//! You can apply this function to a set of `Polygon`s (i.e. `MultiPolygon`). The constituent polygons may be integrated while they expand.
 //! 
 //! ```
 //! let p1 = Polygon::new(
@@ -73,8 +80,26 @@
 //! <img src="./../../../ex3.svg" style="padding: 25px 30%;"/>
 //! </details>
 //! 
-//! + If you want to apply this function to each member (and not want to unify them), just traversing over iterator and collecting them will be fine.
+//! ### Example 4
 //! 
+//! If you want to apply this function to each member (and not want to unify them), just traversing over an iterator and collecting them will be fine.
+//! (You can get a vector of `MultiPolygon`s thanks to the 'turbofish' syntax:`::<>`.)
+//! 
+//! ```
+//! let p1 = Polygon::new(
+//!     LineString::from(vec![(0., 0.), (2., 0.), (2., 2.), (0., 2.)]), vec![],
+//! );
+//! let p2 = Polygon::new(
+//!     LineString::from(vec![(3., 3.), (5., 3.), (5., 5.), (3., 5.)]), vec![],
+//! );
+//! let mp1 = MultiPolygon::new(vec![p1, p2]);
+//! let mp2 = mp1.0.iter().map(|x| polygon_offset::offset_polygon(x, 0.9)).collect::<Vec<_>>();
+//! 
+//! ```
+//! <details>
+//! <summary style="cursor:pointer"> Result </summary>
+//! <img src="./../../../ex4.svg" style="padding: 25px 30%;"/>
+//! </details>
 //! 
 //! # Reference
 //! 
@@ -93,12 +118,18 @@
 //! 
 //! [^note2]: The implementation of the straight skeleton algorithm in CGAL (The Computational Geometry Algorithms Library) is also based on this paper.
 //! 
+//! 
+ 
+pub fn test_fn(){
+    println!("Hello, World!");
+}
+
 
 pub mod util;
+pub mod offset_polygon;
 mod priority_queue;
 mod vertex_queue;
-mod skeleton;
-mod offset_polygon;
+pub mod skeleton;
 
 pub use crate::offset_polygon::{offset_polygon, offset_multi_polygon, skel};
 
