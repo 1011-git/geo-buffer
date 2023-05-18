@@ -8,6 +8,15 @@ pub(crate) enum IndexType{
     RealIndex(usize),
 }
 
+impl fmt::Display for IndexType{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self{
+            IndexType::PointerIndex(x) => write!(f, "Pointer index: {x}"),
+            IndexType::RealIndex(x) => write!(f, "Real index: {x}"),
+        }
+    }
+}
+
 impl IndexType{
     pub(crate) fn get_index(&self) -> usize{
         if let IndexType::PointerIndex(res) = self{

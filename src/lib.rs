@@ -25,8 +25,7 @@
 //! use geo::{Polygon, MultiPolygon, LineString};
 //! 
 //! let p1 = Polygon::new(
-//!     LineString::from(vec![(0., 0.), (1., 0.), (1., 1.), (0., 1.)]),
-//!     vec![],
+//!     LineString::from(vec![(0., 0.), (1., 0.), (1., 1.), (0., 1.)]), vec![],
 //! );
 //! let p2: MultiPolygon = offset_polygon(&p1, -0.2);
 //! 
@@ -39,16 +38,51 @@
 //! <img src="./../../../ex1.svg" style="padding: 25px 30%;"/>
 //! </details>
 //! 
-//! + This example shows the case where a polygon is split while it shrinks.
+//! + This example shows the case where the polygon is split while it shrinks.
+//! 
+//! ```
+//! use polygon_offset::offset_polygon;
+//! use geo::{Polygon, MultiPolygon, LineString};
+//! 
+//! let p1 = Polygon::new(
+//!     LineString::from(vec![(0., 0.), (4., 0.), (4., 4.), (2., 1.), (0., 4.)]), vec![],
+//! );
+//! let p2: MultiPolygon = offset_polygon(&p1, -0.45);
+//! 
+//! ```
+//! <details>
+//! <summary style="cursor:pointer"> Result </summary>
+//! <img src="./../../../ex2.svg" style="padding: 25px 30%;"/>
+//! </details>
 //! 
 //! + You can apply this function to a set of `Polygon`s (i.e. `MultiPolygon`). The constituent polygons may be integrated while they expand.
+//! 
+//! ```
+//! let p1 = Polygon::new(
+//!     LineString::from(vec![(0., 0.), (2., 0.), (2., 2.), (0., 2.)]), vec![],
+//! );
+//! let p2 = Polygon::new(
+//!     LineString::from(vec![(3., 3.), (5., 3.), (5., 5.), (3., 5.)]), vec![],
+//! );
+//! let mp1 = MultiPolygon::new(vec![p1, p2]);
+//! let mp2 = polygon_offset::offset_multi_polygon(&mp1, 0.9);
+//! 
+//! ```
+//! <details>
+//! <summary style="cursor:pointer"> Result </summary>
+//! <img src="./../../../ex3.svg" style="padding: 25px 30%;"/>
+//! </details>
 //! 
 //! + If you want to apply this function to each member (and not want to unify them), just traversing over iterator and collecting them will be fine.
 //! 
 //! 
 //! # Reference
 //! 
-//! This is a Rust implementation of this paper[^note1][^note2]. However, it has been shown that the algorithm presented in this paper is incorrect.
+//! This is a Rust implementation of this paper[^note1][^note2]. (See also [Notes](#Notes) below.)
+//! 
+//! # Notes
+//! 
+//! It has been shown that the algorithm presented in this paper is incorrect. Thus we slightly modified the algorithm for some edge cases.
 //! 
 //! 
 //! [GeoRust]: https://georust.org
@@ -57,7 +91,7 @@
 //! [OGC standards]: https://www.ogc.org/standard/sfa/
 //! [^note1]: Felkel, Petr; Obdržálek, Štěpán (1998), "Straight skeleton implementation", SCCG 98: Proceedings of the 14th Spring Conference on Computer Graphics, pp. 210–218.
 //! 
-//! [^note2]: The implementation of the straight skeleton algorithm in CGAL (The Computational Geometry Algorithms Library) also based on this paper.
+//! [^note2]: The implementation of the straight skeleton algorithm in CGAL (The Computational Geometry Algorithms Library) is also based on this paper.
 //! 
 
 pub mod util;

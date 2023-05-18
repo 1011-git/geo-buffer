@@ -258,7 +258,7 @@ impl Skeleton{
             let left_intersection = if left_ray.is_parallel(&base_ray) {Default::default()} else {left_ray.intersect(&base_ray)};
             let right_intersection = if right_ray.is_parallel(&base_ray) {Default::default()} else {right_ray.intersect(&base_ray)};
             let real_intersection = if left_ray.is_parallel(&base_ray) {
-                let ri_ray = right_ray.bisector(&base_ray.reverse(), right_intersection, orient);
+                let ri_ray = right_ray.bisector(&base_ray.reverse(), right_intersection, !orient);
                 if !ri_ray.is_intersect(&vertex_vector[cv_real].unwrap_ray()) {continue;}
                 ri_ray.intersect(&vertex_vector[cv_real].unwrap_ray())
             } else{
