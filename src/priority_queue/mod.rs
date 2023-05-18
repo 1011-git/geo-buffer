@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 pub(crate) struct PriorityQueue<T: std::cmp::PartialOrd>{
     size: usize,
     content: Vec<T>,

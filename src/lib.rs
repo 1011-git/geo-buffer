@@ -48,7 +48,8 @@
 //! 
 //! # Reference
 //! 
-//! This is a Rust implementation of this paper[^note1][^note2]
+//! This is a Rust implementation of this paper[^note1][^note2]. However, it has been shown that the algorithm presented in this paper is incorrect.
+//! 
 //! 
 //! [GeoRust]: https://georust.org
 //! [Polygon module]: https://docs.rs/geo/0.24.1/geo/geometry/struct.Polygon.html
@@ -56,7 +57,7 @@
 //! [OGC standards]: https://www.ogc.org/standard/sfa/
 //! [^note1]: Felkel, Petr; Obdržálek, Štěpán (1998), "Straight skeleton implementation", SCCG 98: Proceedings of the 14th Spring Conference on Computer Graphics, pp. 210–218.
 //! 
-//! [^note2]: The implementation of the straight skeleton algorithm in CGAL (The Computational Geometry Algorithms Library) also basedon this paper.
+//! [^note2]: The implementation of the straight skeleton algorithm in CGAL (The Computational Geometry Algorithms Library) also based on this paper.
 //! 
 
 pub mod util;
