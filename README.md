@@ -4,13 +4,13 @@
 
 ---
 ## Usage
-```
+```toml
 [dependencies]
 polygon-offset = "0.1.0"
 ```
 
 ## Dependencies
-```
+```toml
 [dependencies]
 geo-types = "0.7.9"
 geo = "0.24.1"

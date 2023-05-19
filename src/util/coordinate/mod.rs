@@ -9,7 +9,7 @@ pub struct Coordinate(
     /// x-component of the Cartesian coordinates.
     pub f64, 
     /// y-component of the Cartesian coordinates.
-    pub f64
+    pub f64,
 );
 
 impl From<Coordinate> for (f64, f64){
@@ -86,8 +86,7 @@ impl Coordinate{
     /// 
     /// ```
     /// let c1 = polygon_offset::Coordinate::new(3., 4.);
-    /// assert_eq!(c1.0, 3.);
-    /// assert_eq!(c1.1, 4.);
+    /// assert_eq!(c1, (3., 4.).into());
     /// ```
     pub fn new(x: f64, y: f64) -> Self{
         Self{0: x, 1: y}
@@ -100,8 +99,7 @@ impl Coordinate{
     /// ```
     /// let c1 = polygon_offset::Coordinate::new(3., 4.);
     /// let t1 = c1.get_val();
-    /// assert_eq!(t1.0, 3.);
-    /// assert_eq!(t1.1, 4.);
+    /// assert_eq!(t1, (3., 4.));
     /// ```
     pub fn get_val(&self) -> (f64, f64){
         (self.0, self.1)
@@ -195,12 +193,27 @@ impl Coordinate{
         f64::sqrt((self.0-rhs.0)*(self.0-rhs.0) + (self.1-rhs.1)*(self.1-rhs.1))
     }
     
+    /// Returns the distance from `self` to the given ray.
+    /// 
+    /// Note that this function considers the given ray as a open-ended line.
+    /// That is, the foot of perpendicular may lay on the extended line of the given ray.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use polygon_offset::{Coordinate, Ray};
+    /// 
+    /// let r1 = Ray::new((0., 3.).into(), (4., 0.).into());
+    /// let c1 = Coordinate::new(0., 0.);
+    /// assert_eq!(c1.dist_ray(&r1), 2.4);
+    /// ```
+    /// 
     pub fn dist_ray(&self, rhs: &Ray) -> f64{
         if rhs.is_degenerated() {return self.dist_coord(&rhs.origin);}
         return f64::abs((*self-rhs.origin).outer_product(&rhs.angle)) / rhs.angle.norm();
     }
 
-    /// Check whether the given two Cartesian coordinates are the same.
+    /// Checks whether the given two Cartesian coordinates are the same (by the equality test with a small epsilon).
     /// 
     /// # Result
     /// 
@@ -209,7 +222,23 @@ impl Coordinate{
     /// 
     /// # Example
     /// 
+    /// ```
+    /// let c1 = polygon_offset::Coordinate::new(0.1, 0.2);
+    /// let c2 = polygon_offset::Coordinate::new(0.2, 0.3);
+    /// let c3 = polygon_offset::Coordinate::new(0.3, 0.5);
+    /// let c4 = c1 + c2;
+    /// assert!(c3.eq(&c4));
+    /// ```
     /// 
+    /// # Example (this example will panic)
+    /// 
+    /// ```should_panic
+    /// let c1 = polygon_offset::Coordinate::new(0.1, 0.2);
+    /// let c2 = polygon_offset::Coordinate::new(0.2, 0.3);
+    /// let c3 = polygon_offset::Coordinate::new(0.3, 0.5);
+    /// let c4 = c1 + c2;
+    /// assert_eq!(c3, c4); // should panic since 0.1 + 0.2 != 0.3 due to floating point errors
+    /// ```
     pub fn eq(&self, rhs: &Self) -> bool{
         feq(self.0, rhs.0) && feq(self.1, rhs.1)
     }

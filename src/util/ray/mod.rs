@@ -4,7 +4,7 @@ use crate::util::*;
 /// This structure conceptullay represents a half-line (let us call it "Ray").
 /// 
 /// A ray has a "start vertex" **r<sub>0</sub>**, that is, **r<sub>0</sub>** is a part of the ray itself,
-/// but we cannot make a disk of radius ε around **r<sub>0</sub>** for every ε > 0.
+/// but we cannot make a disk of radius ε around **r<sub>0</sub>** which for every ε > 0.
 /// 
 /// If we consider the vectors from **r<sub>0</sub>** to each point on the ray, then they are all
 /// pairwise parallel. Therefore there exists a "direction vector" **v** and we can
@@ -29,14 +29,28 @@ impl fmt::Display for Ray{
 }
 
 impl Ray{
-    /**
-     * Returns a [Ray] w.r.t. the given arguments
-     * 
-     * # Arguments
-     * 
-     * + `src` - a coordinate
-     * 
-     */
+    /// Creates and returns a [Ray] w.r.t. the given arguments.
+    ///  
+    /// # Arguments
+    ///  
+    /// + `src`: The starting point of the ray.
+    /// + `dst`: The point for which `src` is heading.
+    /// 
+    /// # Return
+    /// 
+    /// A `Ray` that starts from `src` towards `dst` with arrival time 1.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use polygon_offset::{Coordinate, Ray};
+    /// 
+    /// let c1 = (1., 2.).into();
+    /// let c2 = (2., 3.).into();
+    /// let r1 = Ray::new(c1, c2);
+    /// 
+    /// ```
+    /// 
     pub fn new(src: Coordinate, dst: Coordinate) -> Self{
         Self {
             origin: src,
@@ -44,15 +58,42 @@ impl Ray{
         }
     }
 
+    /// Returns the "starting point" of the given ray.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use polygon_offset::{Coordinate, Ray};
+    /// 
+    /// let c1 = (1., 2.).into();
+    /// let c2 = (2., 3.).into();
+    /// let r1 = Ray::new(c1, c2);
+    /// assert!(c1.eq(&r1.point()));
+    /// 
+    /// ```
     pub fn point(&self) -> Coordinate{
         self.point_by_ratio(0.)
     }
 
+    /// Returns the value of parameterized equation **r<sub>0</sub>** + *t***v** by the given ratio *t*.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use polygon_offset::{Coordinate, Ray};
+    /// 
+    /// let c1 = (1., 2.).into();
+    /// let c2 = (2., 3.).into();
+    /// let c3 = (3., 4.).into();
+    /// let r1 = Ray::new(c1, c2);
+    /// 
+    /// assert!(r1.point_by_ratio(2.).eq(&c3));
+    /// ```
     pub fn point_by_ratio(&self, ratio: f64) -> Coordinate{
         self.origin + self.angle*ratio
     }
 
-    pub fn bisector(&self, rhs: &Ray, origin: Coordinate, orient: bool) -> Self{
+    pub(crate) fn bisector(&self, rhs: &Ray, origin: Coordinate, orient: bool) -> Self{
         let mut ray = self.angle*rhs.angle.norm() + rhs.angle*self.angle.norm();
         if feq(ray.0, 0.) && feq(ray.1, 0.) {
             ray = (-self.angle.1, self.angle.0).into();
@@ -69,9 +110,63 @@ impl Ray{
         Self { origin: origin, angle: ray }
     }
 
+    /// Checks whether `self` contains the given Cartesian coordinate.
+    /// Note that this function considers `self` as a open-ended line.
+    /// That is, if the given point lies on the extended line of `self`, this function returns `true`.
+    /// 
+    /// # Return
+    /// 
+    /// + `true` if the given point lies on `self`,
+    /// + `false` otherwise.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use polygon_offset::{Coordinate, Ray};
+    /// 
+    /// let c1 = (1., 2.).into();
+    /// let c2 = (2., 3.).into();
+    /// let c3 = (3., 4.).into();
+    /// let r1 = Ray::new(c1, c2);
+    /// 
+    /// assert!(r1.is_contain(&c3));
+    /// ```
     pub fn is_contain(&self, rhs: &Coordinate) -> bool {
         if self.is_degenerated() {return feq(self.origin.0, rhs.0) && feq(self.origin.1, rhs.1);}
         feq((*rhs - self.origin).outer_product(&self.angle), 0.)
+    }
+
+    /// Checks whether the given two rays are intersecting with each other.
+    /// More precisely, it checks whether they have one or more common points.
+    /// 
+    /// # Return
+    /// 
+    /// + `true` if the given rays have one or more common points,
+    /// + `false` otherwise.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use polygon_offset::{Coordinate, Ray};
+    /// 
+    /// let c1 = (1., 2.).into();
+    /// let c2 = (2., 3.).into();
+    /// let c3 = (3., 4.).into();
+    /// let r1 = Ray::new(c1, c2);
+    /// 
+    /// assert!(r1.is_contain(&c3));
+    /// ```
+    pub fn is_intersect(&self, rhs: &Ray) -> bool {
+        let op = self.angle.outer_product(&rhs.angle);
+        if feq(op, 0.0){
+            if self.is_contain(&rhs.origin) {return true;}
+            if rhs.is_contain(&self.origin) {return true;}
+            return false;
+        }
+        let i = (rhs.origin - self.origin).outer_product(&rhs.angle) / self.angle.outer_product(&rhs.angle);
+        let j = (rhs.origin - self.origin).outer_product(&self.angle) / self.angle.outer_product(&rhs.angle);
+        if fgeq(i, 0.) && fgeq(j, 0.) {return true;}
+        false
     }
 
     pub fn intersect(&self, rhs: &Ray) -> Coordinate{
@@ -85,19 +180,6 @@ impl Ray{
         }
         let i = (rhs.origin - self.origin).outer_product(&rhs.angle) / self.angle.outer_product(&rhs.angle);
         self.origin + self.angle*i
-    }
-
-    pub fn is_intersect(&self, rhs: &Ray) -> bool {
-        let op = self.angle.outer_product(&rhs.angle);
-        if feq(op, 0.0){
-            if self.is_contain(&rhs.origin) {return true;}
-            if rhs.is_contain(&self.origin) {return true;}
-            return false;
-        }
-        let i = (rhs.origin - self.origin).outer_product(&rhs.angle) / self.angle.outer_product(&rhs.angle);
-        let j = (rhs.origin - self.origin).outer_product(&self.angle) / self.angle.outer_product(&rhs.angle);
-        if fgeq(i, 0.) && fgeq(j, 0.) {return true;}
-        false
     }
 
     pub fn is_parallel(&self, rhs: &Ray) -> bool {
