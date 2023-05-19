@@ -2,24 +2,6 @@
 [![Rust 1.68+](https://img.shields.io/badge/rust-1.68+-orange.svg)](https://www.rust-lang.org)
 [![Cargo 1.68+](https://img.shields.io/badge/cargo-1.68+-blue.svg)](https://www.rust-lang.org)
 
----
-## Usage
-```toml
-[dependencies]
-polygon-offset = "0.1.0"
-```
-
-## Dependencies
-```toml
-[dependencies]
-geo-types = "0.7.9"
-geo = "0.24.1"
-geo-svg = "0.5.0"
-geo-offset = "0.3.0"
-clang-sys = "1.6.1"
-wkt = "0.10.3"
-```
-
 The `polygon-offset` crate provides methods to offset (to enlarge or reduce) certain 
 primitive geometric types in the [GeoRust] ecosystem.
 
@@ -30,7 +12,7 @@ Note that each method assumes **valid** primitives as a parameter, but [Polygon]
 
 For now, the only viable geometric primitives are [Polygon][Polygon module] and [MultiPolygon][MultiPolygon module] (the rest of the primitives will be added as well).
 
-# Quick Guide
+## Quick Guide
 
 The `offset_polygon()` function (resp. `offset_multi_polygon()` function) produces a `MultiPolygon` after applying
 an offset operation to the given `Polygon` (resp. `MultiPolygon`). The absolute value of the argument passed with
@@ -64,6 +46,23 @@ assert_eq!(&expected_exterior, p2.0[0].exterior())
 </details>
 
 ---
+## Usage
+```toml
+[dependencies]
+polygon-offset = "0.1.0"
+```
+
+## Dependencies
+```toml
+[dependencies]
+geo-types = "0.7.9"
+geo = "0.24.1"
+geo-svg = "0.5.0"
+geo-offset = "0.3.0"
+clang-sys = "1.6.1"
+wkt = "0.10.3"
+```
+
 ## Main Contributor
  * [Teneleven Corp](https://1011.co.kr)
  * [Inseop Youn](https://github.com/pinebananais)
