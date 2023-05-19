@@ -1,7 +1,21 @@
 use std::fmt;
 use crate::util::*;
 
-/// aasdf
+/// This structure conceptullay represents a half-line (let us call it "Ray").
+/// 
+/// A ray has a "start vertex" **r<sub>0</sub>**, that is, **r<sub>0</sub>** is a part of the ray itself,
+/// but we cannot make a disk of radius ε around **r<sub>0</sub>** for every ε > 0.
+/// 
+/// If we consider the vectors from **r<sub>0</sub>** to each point on the ray, then they are all
+/// pairwise parallel. Therefore there exists a "direction vector" **v** and we can
+/// represent each point on ray by the parameterized equation:
+/// 
+/// <span style="display: inline-block; width: 100%; text-align:center;"> **r<sub>0</sub>** + *t***v** (*t* ≥ 0), </span>
+/// 
+/// where *t* is the parameter which is greater than or equal to zero.
+/// 
+/// You can also think of a ray as the locus of a moving point at a constant speed from the starting point **r<sub>0</sub>** as time passes.
+/// In this case, the location of the point after time *t* (*t* ≥ 0) is equal to **r<sub>0</sub>** + *t***v**.
 #[derive(Clone, Default, Debug, Copy)]
 pub struct Ray{
     pub(crate) origin: Coordinate,

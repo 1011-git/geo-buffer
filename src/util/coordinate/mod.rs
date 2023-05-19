@@ -128,6 +128,11 @@ impl Coordinate{
     /// assert_eq!(ip, 11.);
     /// ``` 
     /// 
+    /// # Notes
+    /// 
+    /// + This operation is linear.
+    /// + This operation is commutative.
+    /// 
     pub fn inner_product(&self, rhs: &Self) -> f64{
         self.0*rhs.0 + self.1*rhs.1
     }
@@ -149,21 +154,43 @@ impl Coordinate{
     /// ```
     /// let c1 = polygon_offset::Coordinate::new(1., 2.);
     /// let c2 = polygon_offset::Coordinate::new(3., 4.);
-    /// let ip = c1.outer_product(&c2);
-    /// assert_eq!(ip, -2.);
+    /// let op = c1.outer_product(&c2);
+    /// assert_eq!(op, -2.);
     /// ``` 
     /// 
     /// # Notes
     /// 
+    /// + This operation is linear.
+    /// + This operation is *not* commutative. (More precisely, it is anti-commutative.)
+    /// + The sign of cross product indicates the orientation of **a** and **b**. If **a** lies before **b** in
+    /// the counter-clockwise (CCW for short) ordering, the sign of the result will be positive. If **a** lies after **b** in CCW ordering,
+    /// the sign will be negative. The result will be zero if two vectors are colinear. (I.e. lay in the same line.)
     /// 
     pub fn outer_product(&self, rhs: &Self) -> f64{
         self.0*rhs.1-self.1*rhs.0
     }
 
+    /// Returns the Euclidean norm (i.e. magnitude or L2 norm) of the given vector.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// let c1 = polygon_offset::Coordinate::new(3., 4.);
+    /// assert_eq!(c1.norm(), 5.);
+    /// ```
     pub fn norm(&self) -> f64{
         self.inner_product(self).sqrt()
     }
 
+    /// Returns the distance between two Cartesian coordinates.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let c1 = polygon_offset::Coordinate::new(3., 4.);
+    /// let c2 = polygon_offset::Coordinate::new(7., 7.);
+    /// assert_eq!(c1.dist_coord(&c2), 5.);
+    /// ```
     pub fn dist_coord(&self, rhs: &Coordinate) -> f64{
         f64::sqrt((self.0-rhs.0)*(self.0-rhs.0) + (self.1-rhs.1)*(self.1-rhs.1))
     }
@@ -173,6 +200,16 @@ impl Coordinate{
         return f64::abs((*self-rhs.origin).outer_product(&rhs.angle)) / rhs.angle.norm();
     }
 
+    /// Check whether the given two Cartesian coordinates are the same.
+    /// 
+    /// # Result
+    /// 
+    /// + `true` if the given coordinates are the same.
+    /// + `false` otherwise.
+    /// 
+    /// # Example
+    /// 
+    /// 
     pub fn eq(&self, rhs: &Self) -> bool{
         feq(self.0, rhs.0) && feq(self.1, rhs.1)
     }
