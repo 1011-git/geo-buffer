@@ -21,3 +21,6 @@ Cargo.lock
 *.svg
 *.jpeg
 /src/main.rs
+
+# example.svg for README
+!/example.svg

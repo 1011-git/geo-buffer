@@ -27,7 +27,7 @@ Each code snippets below is a brief guide to use this crate. Click 'Result' to e
 
 You can manipulate a polygon with ease by a single function call.
 
-```
+```rust
 use polygon_offset::offset_polygon;
 use geo::{Polygon, MultiPolygon, LineString};
 
@@ -42,7 +42,7 @@ assert_eq!(&expected_exterior, p2.0[0].exterior())
 ```
 <details>
 <summary style="cursor:pointer"> Result </summary>
-<img src="./../../ex1.svg" style="padding: 25px 30%;"/>
+<img src="./example.svg" style="padding: 25px 30%;"/>
 </details>
 
 ---
@@ -78,3 +78,4 @@ The polygon-offset crate is licensed under the Apache License (Version 2.0)
 [GeoRust]: https://georust.org
 [Polygon module]: https://docs.rs/geo/0.24.1/geo/geometry/struct.Polygon.html
 [MultiPolygon module]: https://docs.rs/geo/0.24.1/geo/geometry/struct.MultiPolygon.html
+[OGC standards]: https://www.ogc.org/standard/sfa/
