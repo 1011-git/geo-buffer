@@ -107,37 +107,64 @@
 //! 
 //! # Notes
 //! 
-//! It has been shown that the algorithm presented in this paper is incorrect. Thus we slightly modified the algorithm for some edge cases.
+//! It has been shown that the algorithm presented in this paper is incorrect.[^note3] Thus we slightly modified the algorithm for some edge cases.
 //! 
 //! 
 //! [GeoRust]: https://georust.org
 //! [Polygon module]: https://docs.rs/geo/0.24.1/geo/geometry/struct.Polygon.html
 //! [MultiPolygon module]: https://docs.rs/geo/0.24.1/geo/geometry/struct.MultiPolygon.html
 //! [OGC standards]: https://www.ogc.org/standard/sfa/
-//! [^note1]: Felkel, Petr; Obdržálek, Štěpán (1998), "Straight skeleton implementation", SCCG 98: Proceedings of the 14th Spring Conference on Computer Graphics, pp. 210–218.
+//! [^note1]: Felkel, Petr; Obdržálek, Štěpán (1998), *"Straight skeleton implementation"*, SCCG 98: Proceedings of the 14th Spring Conference on Computer Graphics, pp. 210–218.
 //! 
 //! [^note2]: The implementation of the straight skeleton algorithm in CGAL (The Computational Geometry Algorithms Library) is also based on this paper.
 //! 
+//! [^note3]: Huber, Stefan (2012), *Computing Straight Skeletons and Motorcycle Graphs: Theory and Practice*, Shaker Verlag.
 //! 
- 
-pub fn test_fn(){
-    println!("Hello, World!");
-}
 
+// Define submodules and re-exports
 
-pub mod util;
-pub mod offset_polygon;
 mod priority_queue;
 mod vertex_queue;
+pub mod util;
 pub mod skeleton;
 
-pub use crate::offset_polygon::{offset_polygon, offset_multi_polygon, skel};
+pub use util::{Coordinate, Ray};
+
+// Main functions in this module
+
+use geo_types::{Polygon, MultiPolygon, LineString};
+use skeleton::Skeleton;
+
+/// first line
+/// 
+/// second line
+pub fn offset_polygon(input_polygon: &Polygon, distance: f64) -> MultiPolygon{
+    //! maybe third line?
+    offset_multi_polygon(&MultiPolygon::new(vec![input_polygon.clone()]), distance)
+}
+
+pub fn offset_multi_polygon(input_polygon: &MultiPolygon, distance: f64) -> MultiPolygon{
+    let orientation = if distance < 0. {true} else {false};
+    let offset_distance = f64::abs(distance);
+    let skel = Skeleton::skeleton_of_polygon_vector(&input_polygon.0, orientation);
+    let vq = skel.get_vertex_queue(offset_distance);
+    skel.apply_vertex_queue(&vq, offset_distance)
+}
+
+pub fn skeleton_of_polygon(input_polygon: &Polygon, orientation: bool) -> Skeleton{
+    Skeleton::skeleton_of_polygon(input_polygon, orientation)
+}
+
+pub fn skeleton_of_multi_polygon(input_polygon: &MultiPolygon, orientation: bool) -> Skeleton{
+    Skeleton::skeleton_of_polygon_vector(&input_polygon.0, orientation)
+}
+
+pub fn skel(input_polygon: &MultiPolygon, distance: f64) -> Vec<LineString>{
+    let orientation = if distance < 0. {true} else {false};
+    let skel = Skeleton::skeleton_of_polygon_vector(&input_polygon.0, orientation);
+    skel.to_linestring()
+}
 
 #[cfg(test)]
-mod tests {
+mod tests;
 
-    #[test]
-    fn it_works() {
-        assert!(true);
-    }
-}

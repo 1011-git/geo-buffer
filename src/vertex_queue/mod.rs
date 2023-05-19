@@ -41,6 +41,7 @@ pub(crate) struct Node{
     pub(crate) done: bool,
 }
 
+#[allow(dead_code)]
 impl Node{
     fn new(index: usize, left: usize, right: usize) -> Self{
         Self{index: IndexType::RealIndex(index), left: IndexType::PointerIndex(left), right: IndexType::PointerIndex(right), done: false,}
@@ -61,6 +62,7 @@ pub(crate) struct VertexQueue{
     pub(crate) start_vertex: Vec<usize>,
 }
 
+#[allow(dead_code)]
 impl VertexQueue{
     pub(crate) fn new() -> Self{
         Self { content: Vec::new(), start_vertex: Vec::new(), }

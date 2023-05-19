@@ -5,7 +5,12 @@ use crate::util::{feq, Ray};
 /// This structure conceptually represents a point or a vector on 
 /// the 2-dimensional Cartesian plane. It may be vary on the context which represents which.
 #[derive(Clone, Default, Debug, Copy, PartialEq, PartialOrd)]
-pub struct Coordinate(pub(crate) f64, pub(crate) f64);
+pub struct Coordinate(
+    /// x-component of the Cartesian coordinates.
+    pub f64, 
+    /// y-component of the Cartesian coordinates.
+    pub f64
+);
 
 impl From<Coordinate> for (f64, f64){
     fn from(item: Coordinate) -> (f64, f64){
@@ -74,18 +79,83 @@ impl Coordinate{
     /// 
     /// # Argument
     /// 
-    /// + x: 
+    /// + `x`: x-component of the `Coordinate`
+    /// + `y`: y-component of the `Coordinate`
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// let c1 = polygon_offset::Coordinate::new(3., 4.);
+    /// assert_eq!(c1.0, 3.);
+    /// assert_eq!(c1.1, 4.);
+    /// ```
     pub fn new(x: f64, y: f64) -> Self{
         Self{0: x, 1: y}
     }
 
+    /// Returns a tuple wihch has values of each component.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// let c1 = polygon_offset::Coordinate::new(3., 4.);
+    /// let t1 = c1.get_val();
+    /// assert_eq!(t1.0, 3.);
+    /// assert_eq!(t1.1, 4.);
+    /// ```
     pub fn get_val(&self) -> (f64, f64){
         (self.0, self.1)
     }
+
+    /// Returns a value of inner product (i.e. dot product) of the Cartesian coordinates of
+    /// two vectors.
+    /// 
+    /// # Argument
+    /// 
+    /// + `self`: The Cartesian coordinates of the first vector, **a**.
+    /// + `rhs`: The Cartesian coordinates of the second vector, **b**.
+    /// 
+    /// # Return
+    /// 
+    /// **a** · **b**
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// let c1 = polygon_offset::Coordinate::new(1., 2.);
+    /// let c2 = polygon_offset::Coordinate::new(3., 4.);
+    /// let ip = c1.inner_product(&c2);
+    /// assert_eq!(ip, 11.);
+    /// ``` 
+    /// 
     pub fn inner_product(&self, rhs: &Self) -> f64{
         self.0*rhs.0 + self.1*rhs.1
     }
 
+    /// Returns a value of the magnitude of cross product of the Cartesian coordinates of
+    /// two vectors.
+    /// 
+    /// # Argument
+    /// 
+    /// + `self`: The Cartesian coordinates of the first vector, **a**.
+    /// + `rhs`: The Cartesian coordinates of the second vector, **b**.
+    /// 
+    /// # Return
+    /// 
+    /// **a** × **b**
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// let c1 = polygon_offset::Coordinate::new(1., 2.);
+    /// let c2 = polygon_offset::Coordinate::new(3., 4.);
+    /// let ip = c1.outer_product(&c2);
+    /// assert_eq!(ip, -2.);
+    /// ``` 
+    /// 
+    /// # Notes
+    /// 
+    /// 
     pub fn outer_product(&self, rhs: &Self) -> f64{
         self.0*rhs.1-self.1*rhs.0
     }
