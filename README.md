@@ -17,7 +17,7 @@ For now, the only viable geometric primitives are [Polygon][Polygon module] and 
 The `offset_polygon()` function (resp. `offset_multi_polygon()` function) produces a `MultiPolygon` after applying
 an offset operation to the given `Polygon` (resp. `MultiPolygon`). The absolute value of the argument passed with
 determines the distance between each edge of the result multi-polygon and the original input. The sign determines the orientation
-where the result expands. Positive values mean it going outward --- that is, it expands, --- and negative values mean going inward
+where the result expands. Positive values mean it goes outward --- that is, it expands, --- and negative values mean goes inward
 --- it shrinks ---.
 
 Each code snippets below is a brief guide to use this crate. Click 'Result' to expand the visualized result.
