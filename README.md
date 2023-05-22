@@ -1,8 +1,8 @@
-# polygon-offset
+# geo-buffer
 [![Rust 1.68+](https://img.shields.io/badge/rust-1.68+-orange.svg)](https://www.rust-lang.org)
 [![Cargo 1.68+](https://img.shields.io/badge/cargo-1.68+-blue.svg)](https://www.rust-lang.org)
 
-The `polygon-offset` crate provides methods to offset (to enlarge or reduce) certain 
+The `geo-buffer` crate provides methods to buffer (to enlarge or reduce) certain 
 primitive geometric types in the [GeoRust] ecosystem.
 
 This crate can handle simple polygons properly as well as non-convex polygons, (valid) sets of polygons, and polygons with one or more holes.
@@ -49,7 +49,7 @@ assert_eq!(&expected_exterior, p2.0[0].exterior())
 ## Usage
 ```toml
 [dependencies]
-polygon-offset = "0.1.0"
+geo-buffer = "0.1.0"
 ```
 
 ## Dependencies
@@ -69,7 +69,7 @@ wkt = "0.10.3"
 
 
 ## License
-The polygon-offset crate is licensed under the Apache License (Version 2.0)
+The geo-buffer crate is licensed under the Apache License (Version 2.0)
  * Details : [LICENSE-APACHE](http://www.apache.org/licenses/LICENSE-2.0)
 
 ## Contact
