@@ -10,7 +10,7 @@ use crate::vertex_queue::*;
 use crate::util::*;
 
 #[derive(Debug)]
-enum VertexType{
+pub enum VertexType{
     TreeVertex{axis: Ray, left_ray: Ray, right_ray: Ray, parent: usize, time_elapsed: f64,},
     SplitVertex{anchor: usize, location: Coordinate, split_left: usize, split_right: usize, time_elapsed: f64,},
     RootVertex{location: Coordinate, time_elapsed: f64,}
@@ -40,6 +40,7 @@ impl VertexType{
         VertexType::RootVertex { location: location, time_elapsed: time_elapsed }
     }
 
+    #[allow(dead_code)]
     fn initialize_from_polygon(input_polygon: &Polygon, orient: bool) -> Vec<Self>{
         Self::initialize_from_polygon_vector(&vec![input_polygon.clone()], orient)
     }
@@ -181,7 +182,6 @@ pub struct Skeleton{
     ray_vector: Vec<VertexType>,
     event_queue: Vec<Event>,
     initial_vertex_queue: VertexQueue,
-    polygon_length: usize,
 }
 
 impl Skeleton{
@@ -319,7 +319,7 @@ impl Skeleton{
     }
 
     fn apply_event(vertex_queue: &mut VertexQueue, event: &Event) -> (Option<IndexType>, Option<IndexType>){
-        if let Event::VertexEvent { time, merge_from, merge_to } = event{
+        if let Event::VertexEvent { merge_from, merge_to, .. } = event{
             let merge_from = IndexType::PointerIndex(*merge_from);
             let merge_to = IndexType::RealIndex(*merge_to);
             let cv = vertex_queue.remove_and_set(merge_from, merge_to);
@@ -331,7 +331,7 @@ impl Skeleton{
             }
             return (Some(cv), None);
         }
-        if let Event::EdgeEvent{time, split_from, split_into, split_to_left, split_to_right} = event{
+        if let Event::EdgeEvent{ split_from, split_into, split_to_left, split_to_right, ..} = event{
             let split_from = IndexType::PointerIndex(*split_from);
             let split_into = IndexType::PointerIndex(*split_into);
             let split_to_left = IndexType::RealIndex(*split_to_left);
@@ -355,16 +355,15 @@ impl Skeleton{
         let mut vertex_queue = VertexQueue::new();
         vertex_queue.initialize_from_polygon_vector(input_polygon_vector);
         let initial_vertex_queue = vertex_queue.clone();
-        let length = vertex_queue.content.len();
         // make initial PQ
-        for (_, cv, cv_real) in vertex_queue.iter(){
+        for (_, cv, _) in vertex_queue.iter(){
             Self::make_shrink_event(cv, &vertex_queue, &mut event_pq, &vertex_vector, true);
             Self::make_split_event(cv, &vertex_queue, &mut event_pq, &vertex_vector, orient);
         }
 
         while !event_pq.is_empty() {
             let x = event_pq.pop().unwrap();
-            if let Timeline::ShrinkEvent { time, location, left_vertex, right_vertex, left_real, right_real, tie_break } = x{
+            if let Timeline::ShrinkEvent { time, location, left_vertex, right_vertex, left_real, right_real, .. } = x{
                 if vertex_queue.content[left_vertex.get_index()].done || vertex_queue.content[right_vertex.get_index()].done || vertex_queue.get_real_index(left_vertex) != left_real || vertex_queue.get_real_index(right_vertex) != right_real {
                     continue;
                 }
@@ -420,7 +419,7 @@ impl Skeleton{
             vertex_queue.cleanup();
         }
         //println!("Vertex 8 9 : {} {}", vertex_vector[8].unwrap_ray(), vertex_vector[9].unwrap_ray());
-        Self { ray_vector: vertex_vector, event_queue: event_queue, initial_vertex_queue: initial_vertex_queue, polygon_length: length }
+        Self { ray_vector: vertex_vector, event_queue: event_queue, initial_vertex_queue: initial_vertex_queue }
     }
 
     

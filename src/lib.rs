@@ -135,17 +135,61 @@ pub use util::{Coordinate, Ray};
 use geo_types::{Polygon, MultiPolygon, LineString};
 use skeleton::Skeleton;
 
-/// first line
+/// This function returns the buffered (multi-)polygon of the given polygon.
 /// 
-/// second line
+/// # Arguments
+/// 
+/// + `input_polygon`: `Polygon` to buffer
+/// + `distnace`: determine how distant from each edge of original polygon to each edge of the result polygon
+/// 
+/// # Example
+/// 
+/// ```
+/// use geo_buffer::buffer_polygon;
+/// use geo::{Polygon, MultiPolygon, LineString};
+///
+/// let p1 = Polygon::new(
+///     LineString::from(vec![(0., 0.), (1., 0.), (1., 1.), (0., 1.)]), vec![],
+/// );
+/// let p2: MultiPolygon = buffer_polygon(&p1, -0.2);
+///
+/// let expected_exterior = LineString::from(vec![(0.2, 0.2), (0.8, 0.2), (0.8, 0.8), (0.2, 0.8), (0.2, 0.2)]);
+/// assert_eq!(&expected_exterior, p2.0[0].exterior())
+///
+/// ```
 pub fn buffer_polygon(input_polygon: &Polygon, distance: f64) -> MultiPolygon{
     buffer_multi_polygon(&MultiPolygon::new(vec![input_polygon.clone()]), distance)
 }
 
-pub fn buffer_multi_polygon(input_polygon: &MultiPolygon, distance: f64) -> MultiPolygon{
+/// This function returns the buffered (multi-)polygon of the given multi-polygon.
+/// 
+/// # Arguments
+/// 
+/// + `input_multi_polygon`: `MultiPolygon` to buffer
+/// + `distance`: determine how distant from each edge of original polygon to each edge of the result polygon
+/// 
+/// # Example
+/// 
+/// ```
+/// use geo_buffer::buffer_polygon;
+/// use geo::{Polygon, MultiPolygon, LineString};
+///
+/// let p1 = Polygon::new(
+///     LineString::from(vec![(0., 0.), (2., 0.), (2., 2.), (0., 2.)]), vec![],
+/// );
+/// let p2 = Polygon::new(
+///     LineString::from(vec![(3., 3.), (5., 3.), (5., 5.), (3., 5.)]), vec![],
+/// );
+/// let mp1 = MultiPolygon::new(vec![p1, p2]);
+/// let mp2 = buffer_multi_polygon(&mp1, 1.);
+/// let expected_exterior = LineString::from(vec![(-1., -1.), (3., -1.), (3., 2.), (6., 2.), (6., 6.), (2., 6.), (2., 3.), (-1., 3.), (-1., -1.)]);
+/// assert_eq!(&expected_exterior, mp2.0[0].exterior())
+///
+/// ```
+pub fn buffer_multi_polygon(input_multi_polygon: &MultiPolygon, distance: f64) -> MultiPolygon{
     let orientation = if distance < 0. {true} else {false};
     let offset_distance = f64::abs(distance);
-    let skel = Skeleton::skeleton_of_polygon_vector(&input_polygon.0, orientation);
+    let skel = Skeleton::skeleton_of_polygon_vector(&input_multi_polygon.0, orientation);
     let vq = skel.get_vertex_queue(offset_distance);
     skel.apply_vertex_queue(&vq, offset_distance)
 }
@@ -154,14 +198,16 @@ pub fn skeleton_of_polygon(input_polygon: &Polygon, orientation: bool) -> Skelet
     Skeleton::skeleton_of_polygon(input_polygon, orientation)
 }
 
-pub fn skeleton_of_multi_polygon(input_polygon: &MultiPolygon, orientation: bool) -> Skeleton{
-    Skeleton::skeleton_of_polygon_vector(&input_polygon.0, orientation)
+pub fn skeleton_of_multi_polygon(input_multi_polygon: &MultiPolygon, orientation: bool) -> Skeleton{
+    Skeleton::skeleton_of_polygon_vector(&input_multi_polygon.0, orientation)
 }
 
-pub fn skel(input_polygon: &MultiPolygon, distance: f64) -> Vec<LineString>{
-    let orientation = if distance < 0. {true} else {false};
-    let skel = Skeleton::skeleton_of_polygon_vector(&input_polygon.0, orientation);
-    skel.to_linestring()
+pub fn skeleton_of_polygon_to_linestring(input_polygon: &Polygon, orientation: bool) -> Vec<LineString>{
+    Skeleton::skeleton_of_polygon(input_polygon, orientation).to_linestring()
+}
+
+pub fn skeleton_of_multi_polygon_to_linestring(input_multi_polygon: &MultiPolygon, orientation: bool) -> Vec<LineString>{
+    Skeleton::skeleton_of_polygon_vector(&input_multi_polygon.0, orientation).to_linestring()
 }
 
 #[cfg(test)]

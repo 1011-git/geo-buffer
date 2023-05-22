@@ -17,8 +17,8 @@ For now, the only viable geometric primitives are [Polygon][Polygon module] and 
 The `buffer_polygon()` function (resp. `buffer_multi_polygon()` function) produces a `MultiPolygon` after applying
 an buffer operation to the given `Polygon` (resp. `MultiPolygon`). The absolute value of the argument passed with
 determines the distance between each edge of the result multi-polygon and the original input. The sign determines the orientation
-where the result expands. Positive values mean it goes outward --- that is, it expands, --- and negative values mean goes inward
---- it shrinks ---.
+where the result expands. Positive values mean it goes outward -- that is, it expands, -- and negative values mean goes inward
+-- it shrinks --.
 
 Each code snippets below is a brief guide to use this crate. Click 'Result' to expand the visualized result.
 (The red polygon designates the input, and the orange one designates the results.)
@@ -26,7 +26,7 @@ Each code snippets below is a brief guide to use this crate. Click 'Result' to e
 ### Example
 
 ```rust
-use polygon_offset::buffer_polygon;
+use geo_buffer::buffer_polygon;
 use geo::{Polygon, MultiPolygon, LineString};
 
 let p1 = Polygon::new(
@@ -55,10 +55,6 @@ geo-buffer = "0.1.0"
 [dependencies]
 geo-types = "0.7.9"
 geo = "0.24.1"
-geo-svg = "0.5.0"
-geo-offset = "0.3.0"
-clang-sys = "1.6.1"
-wkt = "0.10.3"
 ```
 
 ## Main Contributor
