@@ -14,8 +14,8 @@ For now, the only viable geometric primitives are [Polygon][Polygon module] and 
 
 ## Quick Guide
 
-The `offset_polygon()` function (resp. `offset_multi_polygon()` function) produces a `MultiPolygon` after applying
-an offset operation to the given `Polygon` (resp. `MultiPolygon`). The absolute value of the argument passed with
+The `buffer_polygon()` function (resp. `buffer_multi_polygon()` function) produces a `MultiPolygon` after applying
+an buffer operation to the given `Polygon` (resp. `MultiPolygon`). The absolute value of the argument passed with
 determines the distance between each edge of the result multi-polygon and the original input. The sign determines the orientation
 where the result expands. Positive values mean it goes outward --- that is, it expands, --- and negative values mean goes inward
 --- it shrinks ---.
@@ -23,18 +23,16 @@ where the result expands. Positive values mean it goes outward --- that is, it e
 Each code snippets below is a brief guide to use this crate. Click 'Result' to expand the visualized result.
 (The red polygon designates the input, and the orange one designates the results.)
 
-### Example 1
-
-You can manipulate a polygon with ease by a single function call.
+### Example
 
 ```rust
-use polygon_offset::offset_polygon;
+use polygon_offset::buffer_polygon;
 use geo::{Polygon, MultiPolygon, LineString};
 
 let p1 = Polygon::new(
     LineString::from(vec![(0., 0.), (1., 0.), (1., 1.), (0., 1.)]), vec![],
 );
-let p2: MultiPolygon = offset_polygon(&p1, -0.2);
+let p2: MultiPolygon = buffer_polygon(&p1, -0.2);
 
 let expected_exterior = LineString::from(vec![(0.2, 0.2), (0.8, 0.2), (0.8, 0.8), (0.2, 0.8), (0.2, 0.2)]);
 assert_eq!(&expected_exterior, p2.0[0].exterior())

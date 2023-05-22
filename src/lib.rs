@@ -1,4 +1,4 @@
-//! The `polygon-offset` crate provides methods to offset (to enlarge or reduce) certain 
+//! The `geo-buffer` crate provides methods to offset (to enlarge or reduce) certain 
 //! primitive geometric types in the [GeoRust] ecosystem.
 //! 
 //! This crate can handle simple polygons properly as well as non-convex polygons, (valid) sets of polygons, and polygons with one or more holes.
@@ -10,7 +10,7 @@
 //! 
 //! # Quick Guide
 //! 
-//! The `offset_polygon()` function (resp. `offset_multi_polygon()` function) produces a `MultiPolygon` after applying
+//! The `buffer_polygon()` function (resp. `buffer_multi_polygon()` function) produces a `MultiPolygon` after applying
 //! an offset operation to the given `Polygon` (resp. `MultiPolygon`). The absolute value of the argument passed with
 //! determines the distance between each edge of the result multi-polygon and the original input. The sign determines the orientation
 //! where the result expands. Positive values mean it going outward --- that is, it expands, --- and negative values mean going inward
@@ -24,13 +24,13 @@
 //! You can manipulate a polygon with ease by a single function call.
 //! 
 //! ```
-//! use polygon_offset::offset_polygon;
+//! use geo_buffer::buffer_polygon;
 //! use geo::{Polygon, MultiPolygon, LineString};
 //! 
 //! let p1 = Polygon::new(
 //!     LineString::from(vec![(0., 0.), (1., 0.), (1., 1.), (0., 1.)]), vec![],
 //! );
-//! let p2: MultiPolygon = offset_polygon(&p1, -0.2);
+//! let p2: MultiPolygon = buffer_polygon(&p1, -0.2);
 //! 
 //! let expected_exterior = LineString::from(vec![(0.2, 0.2), (0.8, 0.2), (0.8, 0.8), (0.2, 0.8), (0.2, 0.2)]);
 //! assert_eq!(&expected_exterior, p2.0[0].exterior())
@@ -46,13 +46,13 @@
 //! This example shows the case where the polygon is split while it shrinks.
 //! 
 //! ```
-//! use polygon_offset::offset_polygon;
+//! use geo_buffer::buffer_polygon;
 //! use geo::{Polygon, MultiPolygon, LineString};
 //! 
 //! let p1 = Polygon::new(
 //!     LineString::from(vec![(0., 0.), (4., 0.), (4., 4.), (2., 1.), (0., 4.)]), vec![],
 //! );
-//! let p2: MultiPolygon = offset_polygon(&p1, -0.45);
+//! let p2: MultiPolygon = buffer_polygon(&p1, -0.45);
 //! 
 //! ```
 //! <details>
@@ -72,7 +72,7 @@
 //!     LineString::from(vec![(3., 3.), (5., 3.), (5., 5.), (3., 5.)]), vec![],
 //! );
 //! let mp1 = MultiPolygon::new(vec![p1, p2]);
-//! let mp2 = polygon_offset::offset_multi_polygon(&mp1, 0.9);
+//! let mp2 = geo_buffer::buffer_multi_polygon(&mp1, 0.9);
 //! 
 //! ```
 //! <details>
@@ -93,7 +93,7 @@
 //!     LineString::from(vec![(3., 3.), (5., 3.), (5., 5.), (3., 5.)]), vec![],
 //! );
 //! let mp1 = MultiPolygon::new(vec![p1, p2]);
-//! let mp2 = mp1.0.iter().map(|x| polygon_offset::offset_polygon(x, 0.9)).collect::<Vec<_>>();
+//! let mp2 = mp1.0.iter().map(|x| geo_buffer::buffer_polygon(x, 0.9)).collect::<Vec<_>>();
 //! 
 //! ```
 //! <details>
@@ -138,12 +138,11 @@ use skeleton::Skeleton;
 /// first line
 /// 
 /// second line
-pub fn offset_polygon(input_polygon: &Polygon, distance: f64) -> MultiPolygon{
-    //! maybe third line?
-    offset_multi_polygon(&MultiPolygon::new(vec![input_polygon.clone()]), distance)
+pub fn buffer_polygon(input_polygon: &Polygon, distance: f64) -> MultiPolygon{
+    buffer_multi_polygon(&MultiPolygon::new(vec![input_polygon.clone()]), distance)
 }
 
-pub fn offset_multi_polygon(input_polygon: &MultiPolygon, distance: f64) -> MultiPolygon{
+pub fn buffer_multi_polygon(input_polygon: &MultiPolygon, distance: f64) -> MultiPolygon{
     let orientation = if distance < 0. {true} else {false};
     let offset_distance = f64::abs(distance);
     let skel = Skeleton::skeleton_of_polygon_vector(&input_polygon.0, orientation);

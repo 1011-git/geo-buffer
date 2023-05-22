@@ -14,7 +14,7 @@ use crate::util::*;
 /// 
 /// where *t* is the parameter which is greater than or equal to zero.
 /// 
-/// You can also think of a ray as the locus of a moving point at a constant speed from the starting point **r<sub>0</sub>** as time passes.
+/// You can also think of a ray as the locus of a moving point at a constant velocity from the starting point **r<sub>0</sub>** as time passes.
 /// In this case, the location of the point after time *t* (*t* ≥ 0) is equal to **r<sub>0</sub>** + *t***v**.
 #[derive(Clone, Default, Debug, Copy)]
 pub struct Ray{
@@ -43,7 +43,7 @@ impl Ray{
     /// # Example
     /// 
     /// ```
-    /// use polygon_offset::{Coordinate, Ray};
+    /// use geo_buffer::{Coordinate, Ray};
     /// 
     /// let c1 = (1., 2.).into();
     /// let c2 = (2., 3.).into();
@@ -63,7 +63,7 @@ impl Ray{
     /// # Example
     /// 
     /// ```
-    /// use polygon_offset::{Coordinate, Ray};
+    /// use geo_buffer::{Coordinate, Ray};
     /// 
     /// let c1 = (1., 2.).into();
     /// let c2 = (2., 3.).into();
@@ -80,7 +80,7 @@ impl Ray{
     /// # Example
     /// 
     /// ```
-    /// use polygon_offset::{Coordinate, Ray};
+    /// use geo_buffer::{Coordinate, Ray};
     /// 
     /// let c1 = (1., 2.).into();
     /// let c2 = (2., 3.).into();
@@ -111,6 +111,7 @@ impl Ray{
     }
 
     /// Checks whether `self` contains the given Cartesian coordinate.
+    /// 
     /// Note that this function considers `self` as a open-ended line.
     /// That is, if the given point lies on the extended line of `self`, this function returns `true`.
     /// 
@@ -122,14 +123,14 @@ impl Ray{
     /// # Example
     /// 
     /// ```
-    /// use polygon_offset::{Coordinate, Ray};
+    /// use geo_buffer::{Coordinate, Ray};
     /// 
     /// let c1 = (1., 2.).into();
     /// let c2 = (2., 3.).into();
     /// let c3 = (3., 4.).into();
     /// let r1 = Ray::new(c1, c2);
     /// 
-    /// assert!(r1.is_contain(&c3));
+    /// assert!(r1.is_contain(&(3., 4.).into()));
     /// ```
     pub fn is_contain(&self, rhs: &Coordinate) -> bool {
         if self.is_degenerated() {return feq(self.origin.0, rhs.0) && feq(self.origin.1, rhs.1);}
@@ -147,14 +148,13 @@ impl Ray{
     /// # Example
     /// 
     /// ```
-    /// use polygon_offset::{Coordinate, Ray};
+    /// use geo_buffer::{Coordinate, Ray};
     /// 
     /// let c1 = (1., 2.).into();
     /// let c2 = (2., 3.).into();
-    /// let c3 = (3., 4.).into();
     /// let r1 = Ray::new(c1, c2);
     /// 
-    /// assert!(r1.is_contain(&c3));
+    /// assert!(r1.is_contain(&(3., 4.).into()));
     /// ```
     pub fn is_intersect(&self, rhs: &Ray) -> bool {
         let op = self.angle.outer_product(&rhs.angle);
@@ -169,6 +169,27 @@ impl Ray{
         false
     }
 
+    /// Returns a common point of the given rays. If they have more than 2 common points, then returns a
+    /// middle point of the starting points of the given rays.
+    /// 
+    /// Note that this function considers the rays as a open-ended line.
+    /// That is, if the common point lies on the extended line(s) of them, this function returns the point.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use geo_buffer::{Coordinate, Ray};
+    /// 
+    /// let c1 = (0., 0.).into();
+    /// let c2 = (1., 1.).into();
+    /// let c3 = (4., 0.).into();
+    /// let c4 = (0., 4.).into();
+    /// let r1 = Ray::new(c1, c2);
+    /// let r2 = Ray::new(c3, c4);
+    /// 
+    /// assert!(r1.intersect(&r2).eq(&(2., 2.).into()));
+    /// 
+    /// ```
     pub fn intersect(&self, rhs: &Ray) -> Coordinate{
         let op = self.angle.outer_product(&rhs.angle);
         if feq(op, 0.) {
@@ -182,27 +203,66 @@ impl Ray{
         self.origin + self.angle*i
     }
 
+    /// Checks whether the given two rays are parallel. If they have more than 2 common points,
+    /// they are not considered as parallel.
+    /// 
+    /// # Return
+    /// 
+    /// + `true` if the given rays are parallel,
+    /// + `false` otherwise.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use geo_buffer::{Coordinate, Ray};
+    /// 
+    /// let c1 = (0., 0.).into();
+    /// let c2 = (1., 1.).into();
+    /// let c3 = (0., 1.).into();
+    /// let c4 = (1., 2.).into();
+    /// let r1 = Ray::new(c1, c2);
+    /// let r2 = Ray::new(c3, c4);
+    /// 
+    /// assert!(r1.is_parallel(&r2));
+    /// ```
     pub fn is_parallel(&self, rhs: &Ray) -> bool {
         let op = self.angle.outer_product(&rhs.angle);
         if feq(op, 0.0) && !self.is_contain(&rhs.origin) {return true;}
         return false;
     }
-    pub fn is_degenerated(&self) -> bool {
+
+    pub(crate) fn is_degenerated(&self) -> bool {
         if feq(self.angle.0, 0.) && feq(self.angle.1, 0.) {true} else {false}
     }
 
+    /// Normalizes the given `Ray`. The magnitude of the 'velocity' becomes 1. Does nothing if it is 0.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use geo_buffer::{Coordinate, Ray};
+    /// 
+    /// let c1 = (0., 0.).into();
+    /// let c2 = (3., 4.).into();
+    /// let mut r1 = Ray::new(c1, c2);
+    /// r1.normalize();
+    /// 
+    /// assert!(r1.point_by_ratio(1.).eq(&(0.6, 0.8).into()));
+    /// ```
     pub fn normalize(&mut self) {
         if self.is_degenerated() {return;}
         self.angle = self.angle/self.angle.norm();
     }
 
-    pub fn orientation(&self, rhs: &Coordinate) -> i32 {
+    pub(crate) fn orientation(&self, rhs: &Coordinate) -> i32 {
         let res = self.angle.outer_product(&(*rhs - self.origin));
         if feq(res, 0.) {return 0;}
         if fgt(res, 0.) {return 1;}
         return -1;
     }
 
+    /// Returns the reversed ray of the given ray. The returned ray has the same starting point
+    /// and the opposite direction to the given ray.
     pub fn reverse(&self) -> Self{
         Self{
             origin: self.origin,

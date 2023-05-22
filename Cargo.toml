@@ -1,5 +1,5 @@
 [package]
-name = "polygon_offset"
+name = "geo-buffer"
 version = "0.1.0"
 edition = "2021"
 
@@ -8,6 +8,8 @@ edition = "2021"
 [dependencies]
 geo-types = "0.7.9"
 geo = "0.24.1"
+
+[dev-dependencies]
 geo-svg = "0.5.0"
 geo-offset = "0.3.0"
 clang-sys = "1.6.1"
