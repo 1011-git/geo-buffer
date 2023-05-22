@@ -18,7 +18,7 @@ The `buffer_polygon()` function (resp. `buffer_multi_polygon()` function) produc
 an buffer operation to the given `Polygon` (resp. `MultiPolygon`). The absolute value of the argument passed with
 determines the distance between each edge of the result multi-polygon and the original input. The sign determines the orientation
 where the result expands. Positive values mean it goes outward -- that is, it expands, -- and negative values mean goes inward
--- it shrinks --.
+-- it deflates --.
 
 Each code snippets below is a brief guide to use this crate. Click 'Result' to expand the visualized result.
 (The red polygon designates the input, and the orange one designates the results.)

@@ -14,7 +14,7 @@
 //! an offset operation to the given `Polygon` (resp. `MultiPolygon`). The absolute value of the argument passed with
 //! determines the distance between each edge of the result multi-polygon and the original input. The sign determines the orientation
 //! where the result expands. Positive values mean it going outward --- that is, it expands, --- and negative values mean going inward
-//! --- it shrinks ---.
+//! --- it deflates ---.
 //! 
 //! Each code snippets below is a brief guide to use this crate. Click 'Result' to expand the visualized result.
 //! (The red polygon designates the input, and the orange one designates the results.)
@@ -43,7 +43,7 @@
 //! 
 //! ### Example 2
 //! 
-//! This example shows the case where the polygon is split while it shrinks.
+//! This example shows the case where the polygon is split while it deflates.
 //! 
 //! ```
 //! use geo_buffer::buffer_polygon;
@@ -140,7 +140,9 @@ use skeleton::Skeleton;
 /// # Arguments
 /// 
 /// + `input_polygon`: `Polygon` to buffer
-/// + `distnace`: determine how distant from each edge of original polygon to each edge of the result polygon
+/// + `distance`: determine how distant from each edge of original polygon to each edge of the result polygon
+///     - `+` for to enlarge (to add paddings, make bigger) the given polygon
+///     - `-` for to deflate (to add margins, make smaller) the given polygon
 /// 
 /// # Example
 /// 
@@ -167,6 +169,8 @@ pub fn buffer_polygon(input_polygon: &Polygon, distance: f64) -> MultiPolygon{
 /// 
 /// + `input_multi_polygon`: `MultiPolygon` to buffer
 /// + `distance`: determine how distant from each edge of original polygon to each edge of the result polygon
+///     - `+` for to enlarge (to add paddings, make bigger) the given polygon
+///     - `-` for to deflate (to add margins, make smaller) the given polygon
 /// 
 /// # Example
 /// 
