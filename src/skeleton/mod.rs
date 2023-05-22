@@ -399,12 +399,10 @@ impl Skeleton{
                     let new_split_vertex = VertexType::new_split_vertex(anchor_real, location, new_index1, new_index2, vertex_vector[anchor_real].unwrap_time());
                     let new_tree_vertex1 = VertexType::new_tree_vertex(location, vertex_vector[anchor_real].unwrap_base_ray().0, vertex_vector[rv[0].3].unwrap_base_ray().1, orient);
                     let new_tree_vertex2 = VertexType::new_tree_vertex(location, vertex_vector[rv[0].3].unwrap_base_ray().1.reverse(), vertex_vector[anchor_real].unwrap_base_ray().1, orient);
-                    if anchor_real == 2 {println!("In skeleton 394'th line: anchor {} split into(sv) {}", anchor_real, rv[0].3);}
                     vertex_vector.push(new_tree_vertex1);
                     vertex_vector.push(new_tree_vertex2);
                     vertex_vector.push(new_split_vertex);
                     let new_event = Event::EdgeEvent { time, split_from: anchor_vertex.get_index(), split_into: rv[0].2.get_index(), split_to_left: new_index1, split_to_right: new_index2 };
-                    println!("Before event split {} into {} queue \n {}", anchor_vertex.get_index(), rv[0].2.get_index(), vertex_queue);
                     match Self::apply_event(&mut vertex_queue, &new_event){
                         (Some(cv1), Some(cv2)) => {
                             vertex_vector[anchor_real].set_parent(new_index2+1);
@@ -418,7 +416,6 @@ impl Skeleton{
             }
             vertex_queue.cleanup();
         }
-        //println!("Vertex 8 9 : {} {}", vertex_vector[8].unwrap_ray(), vertex_vector[9].unwrap_ray());
         Self { ray_vector: vertex_vector, event_queue: event_queue, initial_vertex_queue: initial_vertex_queue }
     }
 
@@ -438,13 +435,11 @@ impl Skeleton{
                     }
                     let ls = LineString(vec![ray_vector[cur].unwrap_location().into(), ray_vector[parent].unwrap_location().into()]);
                     ret.push(ls);
-                    println!("In to linestring: cur {} par {}", cur, parent);
                     dfs_helper(parent, visit, ret, ray_vector);
                 },
                 VertexType::SplitVertex { split_left, split_right, .. } => {
                     dfs_helper(split_left, visit, ret, ray_vector);
                     dfs_helper(split_right, visit, ret, ray_vector);
-                    println!("In to linestring: cur {} split {} {}", cur, split_left, split_right);
                 }
             }
         }

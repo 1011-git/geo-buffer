@@ -1,4 +1,4 @@
-//! The `geo-buffer` crate provides methods to offset (to enlarge or reduce) certain 
+//! The `geo-buffer` crate provides methods to offset (to inflate or deflate) certain 
 //! primitive geometric types in the [GeoRust] ecosystem.
 //! 
 //! This crate can handle simple polygons properly as well as non-convex polygons, (valid) sets of polygons, and polygons with one or more holes.
