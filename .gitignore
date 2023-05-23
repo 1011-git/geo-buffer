@@ -24,3 +24,4 @@ Cargo.lock
 
 # example.svg for README
 !/example.svg
+!assets/*.svg

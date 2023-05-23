@@ -137,6 +137,7 @@ mod vertex_queue;
 pub mod util;
 pub mod skeleton;
 
+#[doc(inline)]
 pub use util::{Coordinate, Ray};
 
 // Main functions in this module
