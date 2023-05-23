@@ -1,6 +1,8 @@
 # geo-buffer
+[![geo-buffer on crates.io](https://img.shields.io/crates/d/geo-buffer.svg)](https://crates.io/crates/geo-buffer)
 [![Rust 1.68+](https://img.shields.io/badge/rust-1.68+-orange.svg)](https://www.rust-lang.org)
 [![Cargo 1.68+](https://img.shields.io/badge/cargo-1.68+-blue.svg)](https://www.rust-lang.org)
+[![Documentation](https://img.shields.io/docsrs/geo-buffer/latest.svg)](https://docs.rs/geo-buffer)
 
 The `geo-buffer` crate provides methods to buffer (to enlarge or reduce) certain 
 primitive geometric types in the [GeoRust] ecosystem via a straight skeleton.
