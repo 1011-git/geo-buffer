@@ -3,12 +3,14 @@
 [![Cargo 1.68+](https://img.shields.io/badge/cargo-1.68+-blue.svg)](https://www.rust-lang.org)
 
 The `geo-buffer` crate provides methods to buffer (to enlarge or reduce) certain 
-primitive geometric types in the [GeoRust] ecosystem.
+primitive geometric types in the [GeoRust] ecosystem via a straight skeleton.
 
 This crate can handle simple polygons properly as well as non-convex polygons, (valid) sets of polygons, and polygons with one or more holes.
 Note that each method assumes **valid** primitives as a parameter, but [Polygon][Polygon module]/[MultiPolygon][MultiPolygon module] modules
 *do not* enforce this validity automatically nor does this crate. (See more details on 'Validity' in [Polygon][Polygon module]/[MultiPolygon][MultiPolygon module]
  and [OGC standards].)
+
+This crate use a [straight skeleton] to buffer (multi-)polygons. You can also compute a straight skeleton separately by proper methods.
 
 For now, the only viable geometric primitives are [Polygon][Polygon module] and [MultiPolygon][MultiPolygon module] (the rest of the primitives will be added as well).
 
@@ -73,3 +75,4 @@ The geo-buffer crate is licensed under the Apache License (Version 2.0)
 [Polygon module]: https://docs.rs/geo/0.24.1/geo/geometry/struct.Polygon.html
 [MultiPolygon module]: https://docs.rs/geo/0.24.1/geo/geometry/struct.MultiPolygon.html
 [OGC standards]: https://www.ogc.org/standard/sfa/
+[straight skeleton]: https://en.wikipedia.org/wiki/Straight_skeleton

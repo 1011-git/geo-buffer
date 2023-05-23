@@ -1,10 +1,12 @@
 //! The `geo-buffer` crate provides methods to offset (to inflate or deflate) certain 
-//! primitive geometric types in the [GeoRust] ecosystem.
+//! primitive geometric types in the [GeoRust] ecosystem via a straight skeleton.
 //! 
 //! This crate can handle simple polygons properly as well as non-convex polygons, (valid) sets of polygons, and polygons with one or more holes.
 //! Note that each method assumes **valid** primitives as a parameter, but [Polygon][Polygon module]/[MultiPolygon][MultiPolygon module] modules
 //! *do not* enforce this validity automatically nor does this crate. (See more details on 'Validity' in [Polygon][Polygon module]/[MultiPolygon][MultiPolygon module]
 //!  and [OGC standards].)
+//! 
+//! 
 //! 
 //! For now, the only viable geometric primitives are [Polygon][Polygon module] and [MultiPolygon][MultiPolygon module] (the rest of the primitives will be added as well).
 //! 
