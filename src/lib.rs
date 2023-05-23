@@ -40,7 +40,7 @@
 //! ```
 //! <details>
 //! <summary style="cursor:pointer"> Result </summary>
-//! <img src="./../../../ex1.svg" style="padding: 25px 30%;"/>
+//! <img src="https://raw.githubusercontent.com/1011-git/geo-buffer/main/assets/ex1.svg" style="padding: 25px 30%;"/>
 //! </details>
 //! 
 //! ### Example 2
@@ -59,7 +59,7 @@
 //! ```
 //! <details>
 //! <summary style="cursor:pointer"> Result </summary>
-//! <img src="./../../../ex2.svg" style="padding: 25px 30%;"/>
+//! <img src="https://raw.githubusercontent.com/1011-git/geo-buffer/main/assets/ex2.svg" style="padding: 25px 30%;"/>
 //! </details>
 //! 
 //! ### Example 3
@@ -82,7 +82,7 @@
 //! ```
 //! <details>
 //! <summary style="cursor:pointer"> Result </summary>
-//! <img src="./../../../ex3.svg" style="padding: 25px 30%;"/>
+//! <img src="https://raw.githubusercontent.com/1011-git/geo-buffer/main/assets/ex3.svg" style="padding: 25px 30%;"/>
 //! </details>
 //! 
 //! ### Example 4
@@ -106,7 +106,7 @@
 //! ```
 //! <details>
 //! <summary style="cursor:pointer"> Result </summary>
-//! <img src="./../../../ex4.svg" style="padding: 25px 30%;"/>
+//! <img src="https://raw.githubusercontent.com/1011-git/geo-buffer/main/assets/ex4.svg" style="padding: 25px 30%;"/>
 //! </details>
 //! 
 //! # Reference
