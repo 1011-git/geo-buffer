@@ -1,4 +1,4 @@
-//! The `geo-buffer` crate provides methods to offset (to inflate or deflate) certain 
+//! The `geo-buffer` crate provides methods to buffer (to inflate or deflate) certain 
 //! primitive geometric types in the [GeoRust] ecosystem via a straight skeleton.
 //! 
 //! This crate can handle simple polygons properly as well as non-convex polygons, (valid) sets of polygons, and polygons with one or more holes.
@@ -6,7 +6,7 @@
 //! *do not* enforce this validity automatically nor does this crate. (See more details on 'Validity' in [Polygon][Polygon module]/[MultiPolygon][MultiPolygon module]
 //!  and [OGC standards].)
 //! 
-//! 
+//! This crate use a [straight skeleton] to buffer (multi-)polygons. You can also compute a straight skeleton separately by proper methods.
 //! 
 //! For now, the only viable geometric primitives are [Polygon][Polygon module] and [MultiPolygon][MultiPolygon module] (the rest of the primitives will be added as well).
 //! 
@@ -67,6 +67,9 @@
 //! You can apply this function to a set of `Polygon`s (i.e. `MultiPolygon`). The constituent polygons may be integrated while they expand.
 //! 
 //! ```
+//! use geo_buffer::buffer_multi_polygon;
+//! use geo::{Polygon, MultiPolygon, LineString};
+//! 
 //! let p1 = Polygon::new(
 //!     LineString::from(vec![(0., 0.), (2., 0.), (2., 2.), (0., 2.)]), vec![],
 //! );
@@ -74,7 +77,7 @@
 //!     LineString::from(vec![(3., 3.), (5., 3.), (5., 5.), (3., 5.)]), vec![],
 //! );
 //! let mp1 = MultiPolygon::new(vec![p1, p2]);
-//! let mp2 = geo_buffer::buffer_multi_polygon(&mp1, 0.9);
+//! let mp2 = buffer_multi_polygon(&mp1, 0.9);
 //! 
 //! ```
 //! <details>
@@ -88,6 +91,9 @@
 //! (You can get a vector of `MultiPolygon`s thanks to the 'turbofish' syntax:`::<>`.)
 //! 
 //! ```
+//! use geo_buffer::buffer_polygon;
+//! use geo::{Polygon, MultiPolygon, LineString};
+//! 
 //! let p1 = Polygon::new(
 //!     LineString::from(vec![(0., 0.), (2., 0.), (2., 2.), (0., 2.)]), vec![],
 //! );
@@ -95,7 +101,7 @@
 //!     LineString::from(vec![(3., 3.), (5., 3.), (5., 5.), (3., 5.)]), vec![],
 //! );
 //! let mp1 = MultiPolygon::new(vec![p1, p2]);
-//! let mp2 = mp1.0.iter().map(|x| geo_buffer::buffer_polygon(x, 0.9)).collect::<Vec<_>>();
+//! let mp2 = mp1.0.iter().map(|x| buffer_polygon(x, 0.9)).collect::<Vec<_>>();
 //! 
 //! ```
 //! <details>
@@ -116,6 +122,7 @@
 //! [Polygon module]: https://docs.rs/geo/0.24.1/geo/geometry/struct.Polygon.html
 //! [MultiPolygon module]: https://docs.rs/geo/0.24.1/geo/geometry/struct.MultiPolygon.html
 //! [OGC standards]: https://www.ogc.org/standard/sfa/
+//! [straight skeleton]: https://en.wikipedia.org/wiki/Straight_skeleton
 //! [^note1]: Felkel, Petr; Obdržálek, Štěpán (1998), *"Straight skeleton implementation"*, SCCG 98: Proceedings of the 14th Spring Conference on Computer Graphics, pp. 210–218.
 //! 
 //! [^note2]: The implementation of the straight skeleton algorithm in CGAL (The Computational Geometry Algorithms Library) is also based on this paper.
@@ -177,7 +184,7 @@ pub fn buffer_polygon(input_polygon: &Polygon, distance: f64) -> MultiPolygon{
 /// # Example
 /// 
 /// ```
-/// use geo_buffer::buffer_polygon;
+/// use geo_buffer::buffer_multi_polygon;
 /// use geo::{Polygon, MultiPolygon, LineString};
 ///
 /// let p1 = Polygon::new(

@@ -168,7 +168,7 @@ impl Coordinate{
         self.0*rhs.1-self.1*rhs.0
     }
 
-    /// Returns the Euclidean norm (i.e. magnitude or L2 norm) of the given vector.
+    /// Returns the Euclidean norm (i.e. magnitude, or L2 norm) of the given vector.
     /// 
     /// # Example
     /// 

@@ -1,10 +1,10 @@
 use std::fmt;
 use crate::util::*;
 
-/// This structure conceptullay represents a half-line (let us call it "Ray").
+/// This structure conceptullay represents a half-line (which also known as "Ray").
 /// 
 /// A ray has a "start vertex" **r<sub>0</sub>**, that is, **r<sub>0</sub>** is a part of the ray itself,
-/// but we cannot make a disk of radius ε around **r<sub>0</sub>** which for every ε > 0.
+/// but we cannot make a disk of radius ε around **r<sub>0</sub>** for every ε > 0.
 /// 
 /// If we consider the vectors from **r<sub>0</sub>** to each point on the ray, then they are all
 /// pairwise parallel. Therefore there exists a "direction vector" **v** and we can
@@ -68,6 +68,7 @@ impl Ray{
     /// let c1 = (1., 2.).into();
     /// let c2 = (2., 3.).into();
     /// let r1 = Ray::new(c1, c2);
+    /// 
     /// assert!(c1.eq(&r1.point()));
     /// 
     /// ```
@@ -84,10 +85,9 @@ impl Ray{
     /// 
     /// let c1 = (1., 2.).into();
     /// let c2 = (2., 3.).into();
-    /// let c3 = (3., 4.).into();
     /// let r1 = Ray::new(c1, c2);
     /// 
-    /// assert!(r1.point_by_ratio(2.).eq(&c3));
+    /// assert!(r1.point_by_ratio(2.).eq(&(3., 4.).into()));
     /// ```
     pub fn point_by_ratio(&self, ratio: f64) -> Coordinate{
         self.origin + self.angle*ratio
@@ -127,7 +127,6 @@ impl Ray{
     /// 
     /// let c1 = (1., 2.).into();
     /// let c2 = (2., 3.).into();
-    /// let c3 = (3., 4.).into();
     /// let r1 = Ray::new(c1, c2);
     /// 
     /// assert!(r1.is_contain(&(3., 4.).into()));
