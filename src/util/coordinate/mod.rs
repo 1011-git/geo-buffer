@@ -3,7 +3,9 @@ use core::ops::{Add, Sub, Div, Mul};
 use crate::util::{feq, Ray};
 
 /// This structure conceptually represents a point or a vector on 
-/// the 2-dimensional Cartesian plane. It may be vary on the context which represents which.
+/// the 2-dimensional Cartesian plane.
+/// 
+/// It may be vary on the context which represents which.
 #[derive(Clone, Default, Debug, Copy, PartialEq, PartialOrd)]
 pub struct Coordinate(
     /// x-component of the Cartesian coordinates.
@@ -162,7 +164,7 @@ impl Coordinate{
     /// + This operation is *not* commutative. (More precisely, it is anti-commutative.)
     /// + The sign of cross product indicates the orientation of **a** and **b**. If **a** lies before **b** in
     /// the counter-clockwise (CCW for short) ordering, the sign of the result will be positive. If **a** lies after **b** in CCW ordering,
-    /// the sign will be negative. The result will be zero if two vectors are colinear. (I.e. lay in the same line.)
+    /// the sign will be negative. The result will be zero if two vectors are colinear. (I.e. lay on the same line.)
     /// 
     pub fn outer_product(&self, rhs: &Self) -> f64{
         self.0*rhs.1-self.1*rhs.0
@@ -230,7 +232,7 @@ impl Coordinate{
     /// assert!(c3.eq(&c4));
     /// ```
     /// 
-    /// # Example (this example will panic)
+    /// # Example (this example panics)
     /// 
     /// ```should_panic
     /// let c1 = geo_buffer::Coordinate::new(0.1, 0.2);

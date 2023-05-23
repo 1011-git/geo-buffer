@@ -148,10 +148,10 @@ use skeleton::Skeleton;
 /// 
 /// # Arguments
 /// 
-/// + `input_polygon`: `Polygon` to buffer
-/// + `distance`: determine how distant from each edge of original polygon to each edge of the result polygon
-///     - `+` for to enlarge (to add paddings, make bigger) the given polygon
-///     - `-` for to deflate (to add margins, make smaller) the given polygon
+/// + `input_polygon`: `Polygon` to buffer.
+/// + `distance`: determine how distant from each edge of original polygon to each edge of the result polygon. The sign will be:
+///     - `+` to inflate (to add paddings, make bigger) the given polygon, and,
+///     - `-` to deflate (to add margins, make smaller) the given polygon.
 /// 
 /// # Example
 /// 
@@ -177,8 +177,8 @@ pub fn buffer_polygon(input_polygon: &Polygon, distance: f64) -> MultiPolygon{
 /// # Arguments
 /// 
 /// + `input_multi_polygon`: `MultiPolygon` to buffer
-/// + `distance`: determine how distant from each edge of original polygon to each edge of the result polygon
-///     - `+` for to enlarge (to add paddings, make bigger) the given polygon
+/// + `distance`: determine how distant from each edge of original polygon to each edge of the result polygon. The sign will be:
+///     - `+` for to enlarge (to add paddings, make bigger) the given polygon, and,
 ///     - `-` for to deflate (to add margins, make smaller) the given polygon
 /// 
 /// # Example
