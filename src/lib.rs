@@ -145,7 +145,7 @@ pub use util::{Coordinate, Ray};
 use geo_types::{Polygon, MultiPolygon, LineString};
 use skeleton::Skeleton;
 
-/// This function returns the buffered (multi-)polygon of the given polygon.
+/// This function returns the buffered (multi-)polygon of the given polygon. This function creates a miter-joint-like corners around each convex vertex.
 /// 
 /// # Arguments
 /// 
@@ -205,11 +205,11 @@ pub fn buffer_polygon_rounded(input_polygon: &Polygon, distance: f64) -> MultiPo
     buffer_multi_polygon_rounded(&MultiPolygon::new(vec![input_polygon.clone()]), distance)
 }
 
-/// This function returns the buffered (multi-)polygon of the given multi-polygon.
+/// This function returns the buffered (multi-)polygon of the given multi-polygon. This function creates a miter-joint-like corners around each convex vertex.
 /// 
 /// # Arguments
 /// 
-/// + `input_multi_polygon`: `MultiPolygon` to buffer
+/// + `input_multi_polygon`: `MultiPolygon` to buffer.
 /// + `distance`: determine how distant from each edge of original polygon to each edge of the result polygon. The sign will be:
 ///     - `+` for to enlarge (to add paddings, make bigger) the given polygon, and,
 ///     - `-` for to deflate (to add margins, make smaller) the given polygon
@@ -240,6 +240,38 @@ pub fn buffer_multi_polygon(input_multi_polygon: &MultiPolygon, distance: f64) -
     skel.apply_vertex_queue(&vq, offset_distance)
 }
 
+/// This function returns the buffered (multi-)polygon of the given multi-polygon, but creates a rounded corners around each convex vertex.
+/// Therefore, distance from each point on border of the buffered polygon to the closest points on the given polygon is (approximately) equal.
+/// Click 'Result' below to see how this function works.
+/// 
+/// # Arguments
+/// 
+/// + `input_multi_polygon`: `MultiPolygon` to buffer.
+/// + `distance`: determine how distant from each edge of original polygon to each edge of the result polygon. The sign will be:
+///     - `+` to inflate (to add paddings, make bigger) the given polygon, and,
+///     - `-` to deflate (to add margins, make smaller) the given polygon.
+/// 
+/// # Example
+/// 
+/// ```
+/// use geo_buffer::buffer_polygon;
+/// use geo::{Polygon, MultiPolygon, LineString};
+///
+/// let p1 = Polygon::new(
+///     LineString::from(vec![(0., 0.), (2., 0.), (2., 2.), (0., 2.)]), vec![],
+/// );
+/// let p2 = Polygon::new(
+///     LineString::from(vec![(3., 3.), (5., 3.), (5., 5.), (3., 5.)]), vec![],
+/// );
+/// let mp1 = MultiPolygon::new(vec![p1, p2]);
+/// let mp2 = buffer_multi_polygon(&mp1, 1.);
+/// ```
+/// 
+/// <details>
+/// <summary style="cursor:pointer"> Result </summary>
+/// <img src="https://raw.githubusercontent.com/1011-git/geo-buffer/main/assets/ex6.svg" style="padding: 25px 30%;"/>
+/// </details>
+/// 
 pub fn buffer_multi_polygon_rounded(input_multi_polygon: &MultiPolygon, distance: f64) -> MultiPolygon{
     let orientation = if distance < 0. {true} else {false};
     let offset_distance = f64::abs(distance);
@@ -256,6 +288,32 @@ pub fn buffer_multi_polygon_rounded(input_multi_polygon: &MultiPolygon, distance
 //     Skeleton::skeleton_of_polygon_vector(&input_multi_polygon.0, orientation)
 // }
 
+/// This function returns a set of `LineSting` which represents an instantiated straight skeleton of the given polygon.
+/// Each segment of the straight skeleton is represented as a single `LineString`, and the returned vector is a set of these `LineString`s.
+/// If either endpoints of a `LineString` is infinitely far from the other, then this `LineString` will be clipped to one which has shorter length.
+/// The order of these `LineString`s is arbitrary. (There is no gauranteed order on segments of the straight skeleton.)
+/// 
+/// # Arguments
+/// 
+/// + `input_polygon`: `Polygon` to get the straight skeleton.
+/// + `orientation`: 
+/// 
+/// # Example
+/// 
+/// ```
+/// use geo_buffer::buffer_polygon;
+/// use geo::{Polygon, MultiPolygon, LineString};
+///
+/// let p1 = Polygon::new(
+///     LineString::from(vec![(0., 0.), (2., 0.), (2., 2.), (0., 2.)]), vec![],
+/// );
+/// let p2: Vec<LineString> = skeleton_of_polygon_to_linestring(&p1, true);
+/// // p2 will be a vector which contains the following elements (in any order):
+/// // LineString::from(vec![0., 0.], [1., 1.]);
+/// // LineString::from(vec![2., 0.], [1., 1.]);
+/// // LineString::from(vec![2., 2.], [1., 1.]);
+/// // LineString::from(vec![0., 0.], [1., 1.]);
+/// ```
 pub fn skeleton_of_polygon_to_linestring(input_polygon: &Polygon, orientation: bool) -> Vec<LineString>{
     Skeleton::skeleton_of_polygon(input_polygon, orientation).to_linestring()
 }

@@ -16,13 +16,15 @@ This crate uses a [straight skeleton] to buffer (multi-)polygons. You can also c
 
 For now, the only viable geometric primitives are [Polygon][Polygon module] and [MultiPolygon][MultiPolygon module] (the rest of the primitives will be added as well).
 
+You can choose a style of convex corners with either options; mitter-joined or round-joined. (See more details on the document.)
+
 ## Quick Guide
 
 The `buffer_polygon()` function (resp. `buffer_multi_polygon()` function) produces a `MultiPolygon` after applying
 an buffer operation to the given `Polygon` (resp. `MultiPolygon`). The absolute value of the argument passed with
 determines the distance between each edge of the result multi-polygon and the original input. The sign determines the direction
-where the result expands. Positive values mean it goes outward -- that is, it expands, -- and negative values mean goes inward
--- it deflates --.
+where the result expands. Positive values mean it goes outward &#8212 that is, it inflates, &#8212 and negative values mean goes inward
+&#8212 it deflates &#8212.
 
 Code snippets below is a brief guide to use this crate. Click 'Result' to expand the visualized result.
 (The red polygon designates the input, and the orange one designates the results.)
