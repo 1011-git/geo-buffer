@@ -242,12 +242,13 @@ pub fn buffer_multi_polygon(input_multi_polygon: &MultiPolygon, distance: f64) -
 
 /// This function returns the buffered (multi-)polygon of the given multi-polygon, but creates a rounded corners around each convex vertex.
 /// Therefore, distance from each point on border of the buffered polygon to the closest points on the given polygon is (approximately) equal.
+/// 
 /// Click 'Result' below to see how this function works.
 /// 
 /// # Arguments
 /// 
 /// + `input_multi_polygon`: `MultiPolygon` to buffer.
-/// + `distance`: determine how distant from each edge of original polygon to each edge of the result polygon. The sign will be:
+/// + `distance`: determines how distant from each edge of original polygon to each edge of the result polygon. The sign will be:
 ///     - `+` to inflate (to add paddings, make bigger) the given polygon, and,
 ///     - `-` to deflate (to add margins, make smaller) the given polygon.
 /// 
@@ -293,10 +294,14 @@ pub fn buffer_multi_polygon_rounded(input_multi_polygon: &MultiPolygon, distance
 /// If either endpoints of a `LineString` is infinitely far from the other, then this `LineString` will be clipped to one which has shorter length.
 /// The order of these `LineString`s is arbitrary. (There is no gauranteed order on segments of the straight skeleton.)
 /// 
+/// Click 'Result' below to see how this function works.
+/// 
 /// # Arguments
 /// 
 /// + `input_polygon`: `Polygon` to get the straight skeleton.
-/// + `orientation`: 
+/// + `orientation`: determines the region where the straight skeleton created. The value of this `boolean` variable will be:
+///     * `true` to create the staright skeleton on the inward region of the polygon, and,
+///     * `false` to create on the outward region of the polygon.
 /// 
 /// # Example
 /// 
@@ -307,17 +312,53 @@ pub fn buffer_multi_polygon_rounded(input_multi_polygon: &MultiPolygon, distance
 /// let p1 = Polygon::new(
 ///     LineString::from(vec![(0., 0.), (2., 0.), (2., 2.), (0., 2.)]), vec![],
 /// );
-/// let p2: Vec<LineString> = skeleton_of_polygon_to_linestring(&p1, true);
-/// // p2 will be a vector which contains the following elements (in any order):
-/// // LineString::from(vec![0., 0.], [1., 1.]);
-/// // LineString::from(vec![2., 0.], [1., 1.]);
-/// // LineString::from(vec![2., 2.], [1., 1.]);
-/// // LineString::from(vec![0., 0.], [1., 1.]);
+/// let ls1: Vec<LineString> = skeleton_of_polygon_to_linestring(&p1, true);
 /// ```
+/// 
+/// <details>
+/// <summary style="cursor:pointer"> Result </summary>
+/// <img src="https://raw.githubusercontent.com/1011-git/geo-buffer/main/assets/ex7.svg" style="padding: 25px 30%;"/>
+/// </details>
+/// 
 pub fn skeleton_of_polygon_to_linestring(input_polygon: &Polygon, orientation: bool) -> Vec<LineString>{
     Skeleton::skeleton_of_polygon(input_polygon, orientation).to_linestring()
 }
 
+/// This function returns a set of `LineSting` which represents an instantiated straight skeleton of the given multi-polygon.
+/// Each segment of the straight skeleton is represented as a single `LineString`, and the returned vector is a set of these `LineString`s.
+/// If either endpoints of a `LineString` is infinitely far from the other, then this `LineString` will be clipped to one which has shorter length.
+/// The order of these `LineString`s is arbitrary. (There is no gauranteed order on segments of the straight skeleton.)
+/// 
+/// Click 'Result' below to see how this function works.
+/// 
+/// # Arguments
+/// 
+/// + `input_multi_polygon`: `MultiPolygon` to get the straight skeleton.
+/// + `orientation`: determines the region where the straight skeleton created. The value of this `boolean` variable will be:
+///     * `true` to create the staright skeleton on the inward region of the polygon, and,
+///     * `false` to create on the outward region of the polygon.
+/// 
+/// # Example
+/// 
+/// ```
+/// use geo_buffer::buffer_polygon;
+/// use geo::{Polygon, MultiPolygon, LineString};
+///
+/// let p1 = Polygon::new(
+///     LineString::from(vec![(0., 0.), (2., 0.), (2., 2.), (0., 2.)]), vec![],
+/// );
+/// let p2 = Polygon::new(
+///     LineString::from(vec![(3., 3.), (5., 3.), (5., 5.), (3., 5.)]), vec![],
+/// );
+/// let mp1 = MultiPolygon::new(vec![p1, p2]);
+/// let ls: Vec<LineString> = skeleton_of_multi_polygon_to_linestring(&mp1, false);
+/// ```
+/// 
+/// <details>
+/// <summary style="cursor:pointer"> Result </summary>
+/// <img src="https://raw.githubusercontent.com/1011-git/geo-buffer/main/assets/ex8.svg" style="padding: 25px 30%;"/>
+/// </details>
+/// 
 pub fn skeleton_of_multi_polygon_to_linestring(input_multi_polygon: &MultiPolygon, orientation: bool) -> Vec<LineString>{
     Skeleton::skeleton_of_polygon_vector(&input_multi_polygon.0, orientation).to_linestring()
 }
