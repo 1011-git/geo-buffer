@@ -1,6 +1,6 @@
 [package]
 name = "geo-buffer"
-version = "0.1.1"
+version = "0.2.0"
 description = "This crate provides methods to buffer (to inflate or deflate) certain primitive geometric types in the GeoRust ecosystem via a straight skeleton."
 edition = "2021"
 authors = ["Teneleven Corp<1011@1011.co.kr>", "Inseop Youn<pinebananais@gmail.com>"]
