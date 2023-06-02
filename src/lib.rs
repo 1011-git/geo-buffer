@@ -3,10 +3,10 @@
 //! 
 //! This crate can handle simple polygons properly as well as non-convex polygons, (valid) sets of polygons, and polygons with one or more holes.
 //! Note that each method assumes **valid** primitives as a parameter, but [Polygon][Polygon module]/[MultiPolygon][MultiPolygon module] modules
-//! *do not* enforce this validity automatically nor does this crate. (See more details on 'Validity' in [Polygon][Polygon module]/[MultiPolygon][MultiPolygon module]
+//! *do not* enforce this validity automatically nor does this crate. (See more details on 'Validity' section in [Polygon][Polygon module]/[MultiPolygon][MultiPolygon module]
 //!  and [OGC standards].)
 //! 
-//! This crate use a [straight skeleton] to buffer (multi-)polygons. You can also compute a straight skeleton separately by proper methods.
+//! This crate use a [straight skeleton] to buffer (multi-)polygons. You can also get a straight skeleton separately by proper methods.
 //! 
 //! For now, the only viable geometric primitives are [Polygon][Polygon module] and [MultiPolygon][MultiPolygon module] (the rest of the primitives will be added as well).
 //! 
@@ -14,8 +14,8 @@
 //! 
 //! The `buffer_polygon()` function (resp. `buffer_multi_polygon()` function) produces a `MultiPolygon` after applying
 //! an offset operation to the given `Polygon` (resp. `MultiPolygon`). The absolute value of the argument passed with
-//! determines the distance between each edge of the result multi-polygon and the original input. The sign determines the orientation
-//! where the result expands. Positive values mean it going outward --- that is, it expands, --- and negative values mean going inward
+//! determines the distance between each edge of the result multi-polygon and the original input. The sign determines the direction
+//! where the result expands. Positive values mean it going outward --- that is, it inflates, --- and negative values mean going inward
 //! --- it deflates ---.
 //! 
 //! Each code snippets below is a brief guide to use this crate. Click 'Result' to expand the visualized result.
@@ -173,6 +173,38 @@ pub fn buffer_polygon(input_polygon: &Polygon, distance: f64) -> MultiPolygon{
     buffer_multi_polygon(&MultiPolygon::new(vec![input_polygon.clone()]), distance)
 }
 
+/// This function returns the buffered (multi-)polygon of the given polygon, but creates a rounded corners around each convex vertex.
+/// Therefore, distance from each point on border of the buffered polygon to the closest points on the given polygon is (approximately) equal.
+/// Click 'Result' below to see how this function works.
+/// 
+/// # Arguments
+/// 
+/// + `input_polygon`: `Polygon` to buffer.
+/// + `distance`: determine how distant from each edge of original polygon to each edge of the result polygon. The sign will be:
+///     - `+` to inflate (to add paddings, make bigger) the given polygon, and,
+///     - `-` to deflate (to add margins, make smaller) the given polygon.
+/// 
+/// # Example
+/// 
+/// ```
+/// use geo_buffer::buffer_polygon;
+/// use geo::{Polygon, MultiPolygon, LineString};
+///
+/// let p1 = Polygon::new(
+///     LineString::from(vec![(0., 0.), (1., 0.), (1., 1.), (0., 1.)]), vec![],
+/// );
+/// let p2: MultiPolygon = buffer_polygon_rounded(&p1, 0.2);
+/// ```
+/// 
+/// <details>
+/// <summary style="cursor:pointer"> Result </summary>
+/// <img src="https://raw.githubusercontent.com/1011-git/geo-buffer/main/assets/ex5.svg" style="padding: 25px 30%;"/>
+/// </details>
+/// 
+pub fn buffer_polygon_rounded(input_polygon: &Polygon, distance: f64) -> MultiPolygon{
+    buffer_multi_polygon_rounded(&MultiPolygon::new(vec![input_polygon.clone()]), distance)
+}
+
 /// This function returns the buffered (multi-)polygon of the given multi-polygon.
 /// 
 /// # Arguments
@@ -208,13 +240,21 @@ pub fn buffer_multi_polygon(input_multi_polygon: &MultiPolygon, distance: f64) -
     skel.apply_vertex_queue(&vq, offset_distance)
 }
 
-pub fn skeleton_of_polygon(input_polygon: &Polygon, orientation: bool) -> Skeleton{
-    Skeleton::skeleton_of_polygon(input_polygon, orientation)
+pub fn buffer_multi_polygon_rounded(input_multi_polygon: &MultiPolygon, distance: f64) -> MultiPolygon{
+    let orientation = if distance < 0. {true} else {false};
+    let offset_distance = f64::abs(distance);
+    let skel = Skeleton::skeleton_of_polygon_vector(&input_multi_polygon.0, orientation);
+    let vq = skel.get_vertex_queue(offset_distance);
+    skel.apply_vertex_queue_rounded(&vq, offset_distance)
 }
 
-pub fn skeleton_of_multi_polygon(input_multi_polygon: &MultiPolygon, orientation: bool) -> Skeleton{
-    Skeleton::skeleton_of_polygon_vector(&input_multi_polygon.0, orientation)
-}
+// pub fn skeleton_of_polygon(input_polygon: &Polygon, orientation: bool) -> Skeleton{
+//     Skeleton::skeleton_of_polygon(input_polygon, orientation)
+// }
+
+// pub fn skeleton_of_multi_polygon(input_multi_polygon: &MultiPolygon, orientation: bool) -> Skeleton{
+//     Skeleton::skeleton_of_polygon_vector(&input_multi_polygon.0, orientation)
+// }
 
 pub fn skeleton_of_polygon_to_linestring(input_polygon: &Polygon, orientation: bool) -> Vec<LineString>{
     Skeleton::skeleton_of_polygon(input_polygon, orientation).to_linestring()

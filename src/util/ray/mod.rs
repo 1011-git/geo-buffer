@@ -1,10 +1,10 @@
 use std::fmt;
 use crate::util::*;
 
-/// This structure conceptullay represents a half-line (which also known as "Ray").
+/// This structure conceptually represents a half-line (which also known as "Ray").
 /// 
 /// A ray has a "start vertex" **r<sub>0</sub>**, that is, **r<sub>0</sub>** is a part of the ray itself,
-/// but we cannot make a disk of radius ε which contained in the ray around **r<sub>0</sub>** for every ε > 0.
+/// but we cannot make a disk of radius ε which contained in the ray around **r<sub>0</sub>** for arbitrary ε > 0.
 /// 
 /// If we consider the vectors from **r<sub>0</sub>** to each point on the ray, then they are all
 /// pairwise parallel. Therefore, there exists a "direction vector" **v** and we can
@@ -262,10 +262,44 @@ impl Ray{
 
     /// Returns the reversed ray of the given ray. The returned ray has the same starting point
     /// and the opposite direction to the given ray.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use geo_buffer::{Coordinate, Ray};
+    /// 
+    /// let c1 = (0., 0.).into();
+    /// let c2 = (3., 4.).into();
+    /// let r1 = Ray::new(c1, c2);
+    /// let r2 = r1.reverse();
+    /// 
+    /// assert!(r2.point_by_ratio(1.).eq(&(-3., -4.).into()));
+    /// ```
     pub fn reverse(&self) -> Self{
         Self{
             origin: self.origin,
             angle: self.angle*-1.,
         }
+    }
+
+    /// Returns a ray which performs a rotation of the given vector through the given angle (in radian).
+    /// The direction of rotation is counter-clockwise direction and the center of rotation is the starting point of the given vector.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use geo_buffer::{Coordinate, Ray};
+    /// 
+    /// let c1 = (0., 0.).into();
+    /// let c2 = (3., 4.).into();
+    /// let r1 = Ray::new(c1, c2);
+    /// let r2 = r1.rotate_by(std::f64::consts::PI/2.);
+    /// 
+    /// assert!(r2.point_by_ratio(1.).eq(&(-4., 3.).into()));
+    /// ```
+    pub fn rotate_by(&self, angle: f64) -> Self{
+        let nx = self.angle.0*f64::cos(angle) - self.angle.1*f64::sin(angle);
+        let ny = self.angle.0*f64::sin(angle) + self.angle.1*f64::cos(angle);
+        Self { origin: self.origin, angle: (nx, ny).into() }
     }
 }

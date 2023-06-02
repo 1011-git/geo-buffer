@@ -12,7 +12,7 @@ Note that each method assumes **valid** primitives as a parameter, but [Polygon]
 *do not* enforce this validity automatically nor does this crate. (See more details on 'Validity' in [Polygon][Polygon module]/[MultiPolygon][MultiPolygon module]
  and [OGC standards].)
 
-This crate use a [straight skeleton] to buffer (multi-)polygons. You can also compute a straight skeleton separately by proper methods.
+This crate uses a [straight skeleton] to buffer (multi-)polygons. You can also compute a straight skeleton separately by proper methods.
 
 For now, the only viable geometric primitives are [Polygon][Polygon module] and [MultiPolygon][MultiPolygon module] (the rest of the primitives will be added as well).
 
@@ -20,11 +20,11 @@ For now, the only viable geometric primitives are [Polygon][Polygon module] and 
 
 The `buffer_polygon()` function (resp. `buffer_multi_polygon()` function) produces a `MultiPolygon` after applying
 an buffer operation to the given `Polygon` (resp. `MultiPolygon`). The absolute value of the argument passed with
-determines the distance between each edge of the result multi-polygon and the original input. The sign determines the orientation
+determines the distance between each edge of the result multi-polygon and the original input. The sign determines the direction
 where the result expands. Positive values mean it goes outward -- that is, it expands, -- and negative values mean goes inward
 -- it deflates --.
 
-Each code snippets below is a brief guide to use this crate. Click 'Result' to expand the visualized result.
+Code snippets below is a brief guide to use this crate. Click 'Result' to expand the visualized result.
 (The red polygon designates the input, and the orange one designates the results.)
 
 ### Example

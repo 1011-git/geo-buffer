@@ -81,8 +81,8 @@ impl Coordinate{
     /// 
     /// # Argument
     /// 
-    /// + `x`: x-component of the `Coordinate`
-    /// + `y`: y-component of the `Coordinate`
+    /// + `x`: x-component of the `Coordinate`.
+    /// + `y`: y-component of the `Coordinate`.
     /// 
     /// # Example
     /// 

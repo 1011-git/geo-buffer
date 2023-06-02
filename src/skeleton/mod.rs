@@ -10,7 +10,8 @@ use crate::vertex_queue::*;
 use crate::util::*;
 
 #[derive(Debug)]
-pub enum VertexType{
+#[allow(dead_code)]
+pub(crate) enum VertexType{
     TreeVertex{axis: Ray, left_ray: Ray, right_ray: Ray, parent: usize, time_elapsed: f64,},
     SplitVertex{anchor: usize, location: Coordinate, split_left: usize, split_right: usize, time_elapsed: f64,},
     RootVertex{location: Coordinate, time_elapsed: f64,}
@@ -177,8 +178,9 @@ impl PartialOrd for Timeline {
     }
 }
 
-
-pub struct Skeleton{
+/// This module implements a core logic of the polygon buffering algorithm. In the normal cases, you don't need to know how this 
+/// module works, nor need to use this module.
+pub(crate) struct Skeleton{
     ray_vector: Vec<VertexType>,
     event_queue: Vec<Event>,
     initial_vertex_queue: VertexQueue,
@@ -230,6 +232,78 @@ impl Skeleton{
         MultiPolygon::new(res)
     }
 
+    pub(crate) fn apply_vertex_queue_rounded(&self, vertex_queue: &VertexQueue, offset_distance: f64) -> MultiPolygon{
+        let orient = self.get_orientation();
+        let mut res = Vec::new();
+        let mut lsv = Vec::new();
+        let mut crdv= Vec::new();
+        let mut cur_vidx = usize::MAX;
+        for (vidx, _, idx) in vertex_queue.iter(){
+            if vidx != cur_vidx{
+                if cur_vidx < usize::MAX {
+                    let mut ls = LineString::from(crdv);
+                    ls.close();
+                    lsv.push(ls);
+                }
+                cur_vidx = vidx;
+                crdv = Vec::new();
+            }
+            let time_left = offset_distance-self.ray_vector[idx].unwrap_time();
+            let (lray, rray) = self.ray_vector[idx].unwrap_base_ray();
+            let cray = self.ray_vector[idx].unwrap_ray();
+            if (lray.angle + cray.angle).norm() > (lray.angle - cray.angle).norm(){
+                let crd = cray.point_by_ratio(time_left);
+                crdv.push(crd);
+            }
+            else{
+                let mut left_normal;
+                let mut right_normal;
+                if orient{
+                    left_normal = Ray{origin: cray.origin, angle: (-lray.angle.1, lray.angle.0).into()};
+                    right_normal = Ray{origin: cray.origin, angle: (rray.angle.1, -rray.angle.0).into()};
+                }
+                else{
+                    left_normal = Ray{origin: cray.origin, angle: (lray.angle.1, -lray.angle.0).into()};
+                    right_normal = Ray{origin: cray.origin, angle: (-rray.angle.1, rray.angle.0).into()};
+                }
+                left_normal.normalize();
+                right_normal.normalize();
+                loop{
+                    let lcrd = left_normal.point_by_ratio(time_left);
+                    crdv.push(lcrd);
+                    left_normal = left_normal.rotate_by(if orient {0.1} else {-0.1});
+                    if orient && left_normal.orientation(&right_normal.point_by_ratio(1.)) == -1 {break;}
+                    if !orient && left_normal.orientation(&right_normal.point_by_ratio(1.)) == 1 {break;}
+                }
+                crdv.push(right_normal.point_by_ratio(time_left));
+            }
+        }
+        if cur_vidx < usize::MAX {
+            let mut ls = LineString::from(crdv);
+            ls.close();
+            lsv.push(ls);
+        }
+        for ls in &lsv{
+            if ls.winding_order() == Some(WindingOrder::CounterClockwise){
+                let p1: Polygon = Polygon::new(
+                    ls.clone(), vec![],
+                );
+                res.push(p1);
+            }
+        }
+        for ls in &lsv{
+            if ls.winding_order() == Some(WindingOrder::Clockwise){
+                for e in &mut res{
+                    if e.contains(ls){
+                        e.interiors_push(ls.clone());
+                        break;
+                    }
+                }
+            }
+        }
+        MultiPolygon::new(res)
+    }
+
     pub(crate) fn get_vertex_queue(&self, time_elapsed: f64) -> VertexQueue{
         let mut ret = self.initial_vertex_queue.clone();
         for e in &self.event_queue{
@@ -240,6 +314,12 @@ impl Skeleton{
             else {break;}
         }
         ret
+    }
+
+    fn get_orientation(&self) -> bool{
+        let iz_ray = self.ray_vector[0].unwrap_ray();
+        let iz_left = self.ray_vector[0].unwrap_base_ray().0;
+        iz_left.orientation(&iz_ray.point_by_ratio(1.)) == 1
     }
 
     fn find_split_vertex(cv: IndexType, vertex_queue: &VertexQueue, vertex_vector: &Vec<VertexType>, is_init: bool, orient: bool) -> Vec<(f64, Coordinate, IndexType, usize)>{
@@ -344,11 +424,11 @@ impl Skeleton{
         (None, None)
     }
 
-    pub fn skeleton_of_polygon(input_polygon: &Polygon, orient: bool) -> Self{
+    pub(crate) fn skeleton_of_polygon(input_polygon: &Polygon, orient: bool) -> Self{
         Self::skeleton_of_polygon_vector(&vec![input_polygon.clone()], orient)
     }
 
-    pub fn skeleton_of_polygon_vector(input_polygon_vector: &Vec<Polygon>, orient: bool) -> Self{
+    pub(crate) fn skeleton_of_polygon_vector(input_polygon_vector: &Vec<Polygon>, orient: bool) -> Self{
         let mut vertex_vector = VertexType::initialize_from_polygon_vector(input_polygon_vector, orient);
         let mut event_pq = PriorityQueue::new();
         let mut event_queue = Vec::new();
@@ -421,7 +501,7 @@ impl Skeleton{
 
     
 
-    pub fn to_linestring(&self) -> Vec<LineString>{
+    pub(crate) fn to_linestring(&self) -> Vec<LineString>{
         fn dfs_helper(cur: usize, visit: &mut Vec<bool>, ret: &mut Vec<LineString>, ray_vector: &Vec<VertexType>){
             if visit[cur] {return;}
             visit[cur] = true;
