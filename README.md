@@ -23,8 +23,8 @@ You can choose a style of convex corners with either options; mitter-joined or r
 The `buffer_polygon()` function (resp. `buffer_multi_polygon()` function) produces a `MultiPolygon` after applying
 an buffer operation to the given `Polygon` (resp. `MultiPolygon`). The absolute value of the argument passed with
 determines the distance between each edge of the result multi-polygon and the original input. The sign determines the direction
-where the result expands. Positive values mean it goes outward &#8212 that is, it inflates, &#8212 and negative values mean goes inward
-&#8212 it deflates &#8212.
+where the result expands. Positive values mean it goes outward &#8212; that is, it inflates, &#8212; and negative values mean goes inward
+&#8212; it deflates &#8212;.
 
 Code snippets below is a brief guide to use this crate. Click 'Result' to expand the visualized result.
 (The red polygon designates the input, and the orange one designates the results.)
@@ -53,7 +53,7 @@ assert_eq!(&expected_exterior, p2.0[0].exterior())
 ## Usage
 ```toml
 [dependencies]
-geo-buffer = "0.1.0"
+geo-buffer = "0.2.1"
 ```
 
 ## Dependencies
