@@ -1,6 +1,6 @@
 [package]
 name = "geo-buffer"
-version = "0.2.0"
+version = "0.2.1"
 description = "This crate provides methods to buffer (to inflate or deflate) certain primitive geometric types in the GeoRust ecosystem via a straight skeleton."
 edition = "2021"
 authors = ["Teneleven Corp<1011@1011.co.kr>", "Inseop Youn<pinebananais@gmail.com>"]
@@ -15,7 +15,7 @@ repository = "https://github.com/1011-git/geo-buffer"
 
 [dependencies]
 geo-types = "0.7.9"
-geo = "0.24.1"
+geo = "0.27.0"
 
 [dev-dependencies]
 geo-svg = "0.5.0"
