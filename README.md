@@ -1,16 +1,17 @@
 # geo-buffer
+
 [![geo-buffer on crates.io](https://img.shields.io/crates/d/geo-buffer.svg)](https://crates.io/crates/geo-buffer)
 [![Rust 1.68+](https://img.shields.io/badge/rust-1.68+-orange.svg)](https://www.rust-lang.org)
 [![Cargo 1.68+](https://img.shields.io/badge/cargo-1.68+-blue.svg)](https://www.rust-lang.org)
 [![Documentation](https://img.shields.io/docsrs/geo-buffer/latest.svg)](https://docs.rs/geo-buffer)
 
-The `geo-buffer` crate provides methods to buffer (to enlarge or reduce) certain 
+The `geo-buffer` crate provides methods to buffer (to enlarge or reduce) certain
 primitive geometric types in the [GeoRust] ecosystem via a straight skeleton.
 
 This crate can handle simple polygons properly as well as non-convex polygons, (valid) sets of polygons, and polygons with one or more holes.
 Note that each method assumes **valid** primitives as a parameter, but [Polygon][Polygon module]/[MultiPolygon][MultiPolygon module] modules
-*do not* enforce this validity automatically nor does this crate. (See more details on 'Validity' in [Polygon][Polygon module]/[MultiPolygon][MultiPolygon module]
- and [OGC standards].)
+_do not_ enforce this validity automatically nor does this crate. (See more details on 'Validity' in [Polygon][Polygon module]/[MultiPolygon][MultiPolygon module]
+and [OGC standards].)
 
 This crate uses a [straight skeleton] to buffer (multi-)polygons. You can also compute a straight skeleton separately by proper methods.
 
@@ -44,36 +45,43 @@ let expected_exterior = LineString::from(vec![(0.2, 0.2), (0.8, 0.2), (0.8, 0.8)
 assert_eq!(&expected_exterior, p2.0[0].exterior())
 
 ```
+
 <details>
 <summary style="cursor:pointer"> Result </summary>
 <img src="./example.svg" style="padding: 25px 30%;"/>
 </details>
 
 ---
+
 ## Usage
+
 ```toml
 [dependencies]
 geo-buffer = "0.2.1"
 ```
 
 ## Dependencies
+
 ```toml
 [dependencies]
 geo-types = "0.7.9"
-geo = "0.24.1"
+geo = "0.25.0"
 ```
 
 ## Main Contributor
- * [Teneleven Corp](https://1011.co.kr)
- * [Inseop Youn](https://github.com/pinebananais)
 
+- [Teneleven Corp](https://1011.co.kr)
+- [Inseop Youn](https://github.com/pinebananais)
 
 ## License
+
 The geo-buffer crate is licensed under the Apache License (Version 2.0)
- * Details : [LICENSE-APACHE](http://www.apache.org/licenses/LICENSE-2.0)
+
+- Details : [LICENSE-APACHE](http://www.apache.org/licenses/LICENSE-2.0)
 
 ## Contact
- * Teneleven Corp / support@1011.co.kr / https://1011.co.kr
+
+- Teneleven Corp / support@1011.co.kr / https://1011.co.kr
 
 [GeoRust]: https://georust.org
 [Polygon module]: https://docs.rs/geo/0.24.1/geo/geometry/struct.Polygon.html
